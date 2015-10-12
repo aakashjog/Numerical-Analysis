@@ -1,0 +1,335 @@
+\documentclass[fleqn, a4paper, 12pt, twoside]{article}
+\usepackage{exsheets} %question and solution environments
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{esint} %integral signs
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+	\usetikzlibrary{calc, hobby, patterns, intersections, angles, quotes, spy}
+\usepackage{graphicx} %inserting graphics
+\usepackage{epstopdf} %converting and inserting eps graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac, lmodern} %inline fractions
+\usepackage{enumerate, enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage[american voltages]{circuitikz} %circuit diagrams
+\usepackage{pdflscape} %pages in landscape orientation
+\usepackage{setspace} %double spacing
+\usepackage{microtype} %micro-typography
+\usepackage{listings} %formatting code
+	\lstset{language=Matlab}
+	\lstdefinestyle{standardMatlab}
+	{
+		belowcaptionskip=1\baselineskip,
+		breaklines=true,
+		frame=L,
+		xleftmargin=\parindent,
+		language=C,
+		showstringspaces=false,
+		basicstyle=\footnotesize\ttfamily,
+		keywordstyle=\bfseries\color{green!40!black},
+		commentstyle=\itshape\color{purple!40!black},
+		identifierstyle=\color{blue},
+		stringstyle=\color{orange},
+	}
+\usepackage{algpseudocode} %algorithms
+\usepackage{algorithm} %algorithms
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{law}{Law}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\newcommand{\divergence}{\mathrm{div\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\newcommand\blfootnote[1]{%
+	\begingroup
+	\renewcommand\thefootnote{}\footnote{#1}%
+	\addtocounter{footnote}{-1}%
+	\endgroup
+}
+
+\renewcommand{\tilde}{\widetilde}
+
+\SetupExSheets{solution/print = true} %prints all solutions by default
+
+%opening
+\title{Numerical Analysis}
+\author{Aakash Jog}
+\date{2015-16}
+
+\begin{document}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\blfootnote
+{	
+	\begin{figure}[H]
+		\includegraphics[height = 12pt]{cc.eps}
+		\includegraphics[height = 12pt]{by.eps}
+		\includegraphics[height = 12pt]{nc.eps}
+		\includegraphics[height = 12pt]{sa.eps}
+	\end{figure}
+	This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit \url{http://creativecommons.org/licenses/by-nc-sa/4.0/}.
+} %CC-BY-NC-SA license
+
+\tableofcontents
+
+\newpage
+\section{Lecturer Information}
+
+\textbf{Prof. Nir Sochen}\\
+~\\
+Office: Schreiber 201\\
+Telephone: \href{tel:+972 3-640-8044}{+972 3-640-8044}\\
+E-mail: \href{mailto:sochen@post.tau.ac.il}{sochen@post.tau.ac.il}\\
+Office Hours: Sundays, 10:00--12:00
+
+\section{Required Reading}
+
+\begin{enumerate}
+	\item S. D. Conte and C. de Boor, Elementary Numerical Analysis, 1972
+\end{enumerate}
+
+\newpage
+
+\section{Floating Point Representation}
+
+\begin{question}
+	Represent 9.75 in base 2.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		9.75 & = 8 + 1 + \frac{1}{2} + \frac{1}{4}                                   \\
+                     & = 2^3 + 2^0 + 2^{-1} + 2^{-2}                                         \\
+                     & = 2^3 \left( 2^0 + 2^{-3} + 2^{-4} + 2^{-5} \right)                   \\
+                     & = \left( 2^{11} \left( 1 + 0.001 + 0.0001 + 0.00001 \right) \right)_2 \\
+                     & = \left( 2^{11} \left( 1.00111 \right) \right)_2
+	\end{align*}
+\end{solution}
+
+\begin{definition}[Double precision floating point representation]
+	A floating point representation which uses 64 bits for representation of a number is called a double precision floating point representation.\\
+	The standard form of double precision representation is
+	\begin{align*}
+		a & = \underbrace{\pm}_{\text{1 bit}} \underbrace{1}_{\text{1 bit}}.\underbrace{\cdots}_{\text{52 bits}} \times w^{\underbrace{\pm}_{\text{1 bit}} \underbrace{\cdots}_{\text{10 bits}}}
+	\end{align*}
+\end{definition}
+
+\begin{theorem}[Range of double precision floating point representation]
+	The largest number which can be represented with double precision floating point representation is approximately $10^{307}$ and the smallest number which can be represented is approximately $10^{-307}$.
+	\label{Range_of_double_precision_floating_point_representation}
+\end{theorem}
+
+\begin{proof}
+	As the exponent has 10 bits for representation,
+	\begin{equation*}
+		-\left( 10^{10} - 1 \right) \le \textnormal{exponent} \le \left( 10^{10} - 1 \right)
+	\end{equation*}
+	Therefore,
+	\begin{equation*}
+		-1023 \le \textnormal{exponent} \le 1023
+	\end{equation*}
+	Therefore, the smallest number, in terms of absolute value, which can be represented, is
+	\begin{align*}
+		1.\underbrace{0 \cdots 0}_{\text{52 bits}} \times 2^{-1024} \approx 10^{-307}
+	\end{align*}
+	Therefore, the smallest number which can be represented is approximately $10^{-307}$, and the largest number which can be represented is approximately $10^{307}$.
+\end{proof}
+
+\begin{definition}[Overflow]
+	If a result is larger than the largest number which can be represented, it is called overflow.
+\end{definition}
+
+\begin{definition}[Underflow]
+	If a result is smaller than the smallest number which can be represented, it is called underflow.
+\end{definition}
+
+\begin{definition}[Least significant digit]
+	\begin{align*}
+		1 & = 1.\underbrace{0 \cdots 0}_{\text{52 zeros}} \times 2^0 \\
+	\end{align*}
+	Let $1_{\varepsilon}$ be the smallest number larger than 1, which can be represented in double precision floating point representation.\\
+	Therefore,
+	\begin{align*}
+		1 & = 1.\underbrace{0 \cdots 0}_{\text{51 zeros}} 1 \times 2^0 \\
+                  & = 1 + 2^{-52}                                              \\
+                  & \approx 1 + 2 \times 10^{-16}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		1 - 1_{\varepsilon} & = 2^{-52} \\
+                                    & \approx 2 \times 10^{-16}
+	\end{align*}
+	This number is called the least significant digit, or the machine precision.
+	It is the maximum possible error in representation.
+	It is represented by $\varepsilon$.
+	\label{LSD}
+\end{definition}
+
+\begin{definition}[Error]
+	Let the DPFP representation of a number $x$ be $\tilde{x}$.\\
+	The absolute error in representation is defined as
+	\begin{align*}
+		\textnormal{absolute error} & = \left| x - \tilde{x} \right| \\
+                                            & = 0.0 \cdots 01 \times 2^{\text{exponent}}
+	\end{align*}
+	The relative error in representation is defined as
+	\begin{align*}
+		\delta & = \frac{\left| x - \tilde{x} \right|}{x} \\
+                       & = 0.0 \cdots 01                          \\
+                       & < \varepsilon
+	\end{align*}
+	The maximum error, $2^{-52} \approx 2 \times 10^{-16}$, is called the machine precision.\\
+	In general,
+	\begin{align*}
+		\tilde{x} \, \tilde{\star} \, \tilde{y} & = \left( x \star y \right) \left( 1 + \delta \right)
+	\end{align*}
+	where $\delta$ is the relative error, $\varepsilon$ is the machine precision, $\delta < \varepsilon$, and $\star$ is an operator. 
+\end{definition}
+
+\subsection{Loss of Significant Digits in Addition and Subtraction}
+
+\begin{question}
+	Represent $\pi + \frac{1}{30}$ in base 10 with 4 digits.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		\pi & \approx 3.14159
+	\end{align*}
+	Approximating by ignoring the last digits,
+	\begin{align*}
+		\tilde{\pi} & = 3.141
+	\end{align*}
+	Similarly,
+	\begin{align*}
+		\tilde{\frac{1}{30}} & = 3.333 \times 10^{-2} \\
+	\end{align*}
+	Therefore, adding,
+	\begin{align*}
+		\tilde{\pi} + \tilde{\frac{1}{30}} & = 3.141 + 0.03333 \\
+                                                   & = 3.174
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\delta & = \left| \frac{\left( \tilde{\pi} + \tilde{\frac{1}{30}} \right) - \left( \pi + \frac{1}{30} \right)}{\pi + \frac{1}{30}} \right| \\
+                       & = 0.0003
+	\end{align*}
+	Therefore, $\delta < \varepsilon = 0.001$
+\end{solution}
+
+\begin{question}
+	Given
+	\begin{align*}
+		a & = 1.435234 \\
+		b & = 1.429111
+	\end{align*}
+	Find the relative error.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		a & = 1.435234 \\
+		b & = 1.429111
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		a - b & = 0.0061234
+	\end{align*}
+	Approximating by ignoring the last digits,
+	\begin{align*}
+		\tilde{a} & = 1.435 \\
+		\tilde{b} & = 1.429
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\tilde{a} - \tilde{b} & = 0.006
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\delta & = \left| \frac{\left( a - b \right) - \left( \tilde{a} - \tilde{b} \right)}{a - b} \right|
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\delta > 10^{-3} \\
+		\therefore \delta > \varepsilon
+	\end{align*}
+\end{solution}
+
+\begin{question}
+	Solve
+	\begin{align*}
+		x^2 + 10^8 x + 1 & = 0
+	\end{align*}
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		x & = \frac{-10^8 \pm \sqrt{10^{16} - 4}}{2}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x_{-} & \approx -10^8
+	\end{align*}
+	Therefore, by Vietta Rules,
+	\begin{align*}
+		x_1 x_2   & = \frac{c}{a}  \\
+		x_1 + x_2 & = -\frac{b}{a} \\
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x_{+} x_{-}      & = 1               \\
+		\therefore x_{+} & = \frac{1}{x_{-}} \\
+                                 & \approx -10^{-8}
+	\end{align*}
+	In MATLAB, this can be executed as \lstinline!x = roots([1,10^8,1])!\\
+	This gives the result
+	\begin{align*}
+		x_{+} & = -7.45 \times 10^{-9}
+	\end{align*}
+	Therefore, the absolute error is
+	\begin{align*}
+		\left| \tilde{x} - x \right| & = \left| -7.45 \times 10^{-9} - \left( -10^{-8} \right) \right| \\
+                                             & = 2.55 \times 10^{-9}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\delta & = \left| \frac{\tilde{x} - x}{x} \right|             \\
+                       & = \left| \frac{2.55 \times 10^{-9}}{10^{-8}} \right| \\
+                       & = 0.255                                              \\
+                       & = 25 \%
+	\end{align*}
+	The algorithm used by MATLAB is
+	\begin{algorithmic}
+		\If{$b \ge 0$}
+			\State $x_1 = \frac{-b - \sqrt{b^2 - 4 a c}}{2 a}$
+			\State $x_2 = \frac{x}{a x_1}$
+		\Else
+			\State $x_2 = \frac{-b + \sqrt{b^2 - 4 a c}}{2 a}$
+			\State $x_1 = \frac{c}{a x_2}$
+		\EndIf
+	\end{algorithmic}
+	This is done to avoid subtraction of numbers close to each other, and hence avoid the possible error.
+\end{solution}
+
+\end{document}
