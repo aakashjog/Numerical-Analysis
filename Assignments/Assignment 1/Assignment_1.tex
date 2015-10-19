@@ -1,0 +1,279 @@
+\documentclass[fleqn, a4paper, 11pt, oneside]{amsart}
+%\usepackage[top = 2cm, bottom = 1cm, left = 1cm, right = 1cm]{geometry}
+\usepackage{exsheets, tasks}
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units, space-before-unit]{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+\usetikzlibrary{calc, hobby, patterns, intersections, decorations.markings}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac} %inline fractions
+\usepackage{enumerate,enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage{circuitikz}[american voltages, american currents] %circuit diagrams
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\newcommand{\AxisRotator}[1][rotate=0]{
+	\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
+} %rotation symbols on axes
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}
+\renewcommand{\thesection}{(\arabic{section})}
+
+%section headings on left
+\makeatletter
+\def\specialsection{\@startsection{section}{1}%
+	\z@{\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\centering}}% DELETED
+	{\normalfont}}% NEW
+\def\section{\@startsection{section}{1}%
+	\z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\scshape\centering}}% DELETED
+	{\normalfont\scshape}}% NEW
+\makeatother
+
+%forces newline after subsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+	\z@{.5\linespacing\@plus.7\linespacing}{.1\linespacing}%
+	{\normalfont\itshape}}
+\makeatother
+
+\settasks{counter-format = tsk[1].}
+
+\SetupExSheets{solution/print = true}
+
+%opening
+\title{Numerical Analysis : Assignment 1}
+\author
+{
+	Aakash Jog\\
+	ID : 989323563
+}
+\date{\formatdate{20}{10}{2015}}
+
+\begin{document}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+%\begin{question}
+%	Let $n$ and $m$ be positive integers and consider the binary floating point system where our machine store numbers in the form $\pm 1 . a_1 a_2 \dots a_n 2^e$, where $e \in \{0,-1,-2,\dots,-m\}$ and $a_k \in \{0,1\}$.
+%	In terms of $n$ and $m$, how many numbers are there in the system?
+%\end{question}
+%
+%\begin{solution}
+%	As each $a_k \in \{0,1\}$, the total number of possible mantissas is $2^n$.\\
+%	As $e \in \{0,-1,\dots,-.\}$, the total number of possible exponents is $m + 1$.\\
+%	Therefore, the number of numbers, in absolute value, which can be expressed is 
+%	\begin{align*}
+%		p & = (2^n) (m + 1)
+%	\end{align*}
+%	As the sign is represented by one bit, the total number of numbers is $2 p$.\\
+%	Therefore, the total number of numbers which can be represented is
+%	\begin{align*}
+%		2 p & = (2) (2^n) (m + 1)
+%	\end{align*}
+%\end{solution}
+
+\setcounter{question}{1}
+
+\begin{question}
+	Reformulate the following functions, if needed, to avoid loss of significant digits.
+	\begin{enumerate}
+		\item $f(x) = \sqrt{1 + x} - \sqrt{x}$ for $x >> 1$.
+		\item $f(x) = \sqrt{1 + x} - \sqrt{x}$ for $x \approx 0$.
+		\item $f(x) = \sqrt{1 + x} - 1$ for $x >> 1$.
+		\item $f(x) = \sqrt{1 + x} - 1$ for $x \approx 0$.
+		\item $f(x) = \ln(x + 1) - \ln(x)$ for $x >> 1$.
+		\item $f(x) = \ln(x + 1) - \ln(x)$ for $x \approx 0$.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			As $x >> 1$,
+			\begin{align*}
+				f(x) & = \sqrt{1 + x} - \sqrt{x} \\
+                                     & = \sqrt{x} - \sqrt{x}     \\
+                                     & = 0                       \\
+                                     & = f(x + 1)
+			\end{align*}
+			Therefore, there is a loss of significant digits.\\
+			Therefore, the function needs to be reformulated.
+			\begin{align*}
+				f(x) & = \sqrt{1 + x} - \sqrt{x} \\
+                                     & = \frac{1}{\sqrt{1 + x} + \sqrt{x}}
+			\end{align*}
+			This expression can never be zero, hence, there is no loss of significant digits.
+		\item
+			As $x \approx 0$,
+			\begin{align*}
+				f(x) & = \sqrt{1 + x} - \sqrt{x} \\
+                                     & = \sqrt{1}                \\
+                                     & = 1                       \\
+                                     & = f(x + 1)
+			\end{align*}
+			Therefore, there is a loss of significant digits.\\
+			Therefore, the function needs to be reformulated.
+			\begin{align*}
+				f(x) & = \left( 1 + \frac{x}{2} - \frac{x^2}{8} + \frac{x^3}{16} - \dots \right) - \sqrt{x}
+			\end{align*}
+			As this expression is unique for every $x$, there is no loss of significant digits.
+		\item
+			As $x >> 1$,
+			\begin{align*}
+				f(x)            & = \sqrt{1 + x} - 1 \\
+                                                & = \sqrt{x} - 1     \\
+				f(x + 1)        & = \sqrt{2 + x} - 1 \\
+                                                & = \sqrt{x} - 1     \\
+				\therefore f(x) & = f(x + 1)
+			\end{align*}
+			Therefore, there is a loss of significant digits.\\
+			Therefore, the function needs to be reformulated.
+			\begin{align*}
+				f(x)                & = \sqrt{1 + x} - 1               \\
+                                                    & = \frac{x}{\sqrt{1 + x} + 1}     \\
+				\therefore f(x + 1) & = \frac{x + 1}{\sqrt{2 + x} + 1} \\
+                                                    & \neq f(x)
+			\end{align*}
+			Hence, in this formulation, there is no loss of significant digits.
+		\item
+			As $x \approx 0$,
+			\begin{align*}
+				f(x) & = \sqrt{1 + x} - 1 \\
+                                     & = 0
+			\end{align*}
+			Therefore, there is a loss of significant digits.\\
+			Therefore, the function needs to be reformulated.
+			\begin{align*}
+				f(x) & = \sqrt{1 + x} - 1                                                            \\
+                                     & = \left( 1 + \frac{x}{2} - \frac{x^2}{8} + \frac{x^3}{16} - \dots \right) + 1 \\
+                                     & = \frac{x}{2} - \frac{x^2}{8} + \frac{x^3}{16} - \dots
+			\end{align*}
+			Hence, in this formulation, there is no loss of significant digits.
+		\item
+			As $x >> 1$,
+			\begin{align*}
+				f(x) & = \ln(x + 1) - \ln(x)               \\
+                                     & = \ln\left( \frac{x + 1}{x} \right) \\
+                                     & = \ln(1)                            \\
+                                     & = f(x + 1)
+			\end{align*}
+			Therefore, there is a loss of significant digits.\\
+			Therefore, the function needs to be reformulated.
+			\begin{align*}
+				f(x) & = \ln\left( \frac{x + 1}{x} \right) \\
+                                     & = \ln\left( 1 + \frac{1}{x} \right)
+			\end{align*}
+			Hence, in this formulation, there is no loss of significant digits.
+		\item
+			As $x \approx 0$,
+			\begin{align*}
+				f(x) & = \ln(x + 1) - \ln(x)               \\
+                                     & = \ln\left( \frac{x + 1}{x} \right) \\
+                                     & = \ln(1)                            \\
+                                     & = f(x + 1)
+			\end{align*}
+			Therefore, there is a loss of significant digits.\\
+			Therefore, the function needs to be reformulated.
+			\begin{align*}
+				f(x) & = \left( x - \frac{x^2}{2} + \frac{x^3}{3} - \dots \right) - \ln(x)
+			\end{align*}
+			Hence, in this formulation, there is no loss of significant digits.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let $\tilde{x}$ and $\tilde{y}$ be approximations of the numbers $x$ and $y$, respectively.\\
+	Show
+	\begin{enumerate}
+		\item
+			\begin{align*}
+				\left| e_{\frac{x}{y}} \right| & \le \frac{|x| |e_y| + |y| |e_x|}{|y| |\tilde{y}|}
+			\end{align*}
+%		\item
+%			\begin{align*}
+%				\left| e_{\frac{x}{y}} \right| & \le \frac{|x| |e_y| + |y| |e_x|}{|y|^2 - |y| |e_y|}
+%			\end{align*}
+%		\item
+%			\begin{align*}
+%				\left| e_{\frac{x}{y}} \right| & \lesssim \frac{|x| |e_y| + |y| |e_x|}{|y|^2} \left( 1 + |\delta_y| \right)
+%			\end{align*}
+%		\item
+%			\begin{align*}
+%				\left| e_{\frac{x}{y}} \right| & \lesssim \left| \frac{x}{y} \right| \left( |\delta_x| + |\delta_y| \right) \left( 1 + |\delta_y| \right)
+%			\end{align*}
+%		\item
+%			\begin{align*}
+%				\left| e_{\frac{x}{y}} \right| & \lesssim \left| \frac{x}{y} \right| \left( |\delta_x| + |\delta_y| \right)
+%			\end{align*}
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				\left| e_{\frac{x}{y}} \right| & = \left| \frac{x}{y} - \frac{\tilde{x}}{\tilde{y}} \right|     \\
+                                                               & = \left| \frac{x \tilde{y} - \tilde{x} y}{y \tilde{y}} \right| \\
+                                                               & = \left| \frac{x (y - e_y) - (x - e_x) y}{y \tilde{y}} \right| \\
+                                                               & = \left| \frac{x y - x e_y - x y + y e_x}{y \tilde{y}} \right| \\
+                                                               & = \left| \frac{x e_y - y e_x}{y \tilde{y}} \right|             \\
+                                                               & = \frac{|x e_y - y e_x|}{|y \tilde{y}|}                        \\
+                                                               & \le \frac{|x| |e_y| + |y| |e_x|}{|y| |\tilde{y}|}
+			\end{align*}
+			\qed
+%		\item
+%			\begin{align*}
+%				\left| e_{\frac{x}{y}} \right| & = \frac{|x e_y - y e_x|}{|y \tilde{y}|}             \\
+%                                                               & = \frac{|x e_y - y e_x|}{|y (y - e_y)}              \\
+%                                                               & = \frac{|x e_y - y e_x|}{|y^2 - y e_y|}             \\
+%                                                               & \le \frac{|x| |e_y| + |y| |e_x|}{|y^2 - y e_y|}     \\
+%                                                               & \le \frac{|x| |e_y| + |y| |e_x|}{|y^2| - |y e_y|}   \\
+%                                                               & \le \frac{|x| |e_y| + |y| |e_x|}{|y|^2 - |y| |e_y|} \\
+%			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+%\begin{question}
+%	Let $\tilde{x}$ and $\tilde{y}$ be approximations of the numbers $x$ and $y$, respectively.
+%	\begin{enumerate}
+%		\item
+%			Show that the relative error in calculating $\frac{y}{x}$ satisfies
+%			\begin{align*}
+%				\delta_{\frac{y}{x}} & \approx \delta_y - \delta_x + \delta_y \delta_x \\
+%                                                     & \approx \delta_y - \delta_x
+%			\end{align*}
+%		\item
+%			Is there a loss of significant digits when dividing by a small number?
+%	\end{enumerate}
+%\end{question}
+
+\end{document}
