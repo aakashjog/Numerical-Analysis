@@ -332,4 +332,334 @@ Office Hours: Sundays, 10:00--12:00
 	This is done to avoid subtraction of numbers close to each other, and hence avoid the possible error.
 \end{solution}
 
+\section{Series of Approximations}
+
+\subsection{Order of Convergence}
+
+\begin{definition}
+	Let $\{\alpha_n\}_{n = 1}^{\infty}$ be a series.
+	$\{\alpha_n\}$ is said to converge to $\alpha$, denoted as $\alpha_n \to \alpha$, if $\forall \varepsilon > 0$, $\varepsilon \in \mathbb{R}$, $\exists n_0(\varepsilon) \in \mathbb{N}$, such that $\forall n \in \mathbb{N}$, $n > n_0(\varepsilon)$, $|\alpha_n - \alpha| < \varepsilon$.
+\end{definition}
+
+Usually, the series $\{\alpha_n\}$ is compared to a simpler series such as $\frac{1}{n} , \frac{1}{n^{\beta}} , \dots$.
+
+\begin{definition}
+	$\alpha_n$ is said to be ``big-O'' of $\beta_n$, and is said to behave like $\beta_n$, if $\exists k \in \mathbb{R}$, $k > 0$, $\exists n_0 \in \mathbb{N}$, $n_0 > 0$, such that $\forall n > n_0$,
+	\begin{align*}
+		|\alpha_n| &\le k |\beta_n|
+	\end{align*}
+	It is denoted as
+	\begin{align*}
+		\alpha_n &= \mathrm{O}(\beta_n)
+	\end{align*}
+\end{definition}
+
+\begin{definition}
+	$\alpha_n$ is said to be ``small-O'' of $\beta_n$ if
+	\begin{align*}
+		\lim\limits_{n \to \infty} \frac{\alpha_n}{\beta_n} &= 0
+	\end{align*}
+	It is denoted as
+	\begin{align*}
+		\alpha_n &= \mathrm{o}(\beta_n)
+	\end{align*}
+\end{definition}
+
+\begin{question}
+	Find the order of convergence of
+	\begin{align*}
+		\alpha_n &= 2 n^3 + 3 n^2 + 4 n + 5
+	\end{align*}
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		\alpha_n &= 2 n^3 + 3 n^2 + 4 n + 5\\
+		&\le (2 + 3 + 4 + 5) n^3\\
+		\therefore \alpha_n &\le 14 n^3
+	\end{align*}
+	Therefore, comparing to the standard form,
+	\begin{align*}
+		k &= 14\\
+		\beta_n &= n^3
+	\end{align*}
+	Therefore, as $\forall n \ge 1$, $|a_n| \le 14 |\beta_n|$,
+	\begin{align*}
+		\alpha_n &= \mathrm{O}(\beta_n)
+	\end{align*}
+	Also,
+	\begin{align*}
+		\lim\limits_{n \to \infty} \frac{\alpha_n}{\beta_n} &= \lim\limits_{n \to \infty} \frac{2 n^3 + 2 n^2 + 4 n + 5}{n^3}\\
+		&= 2
+	\end{align*}
+	Therefore, as the limits is not zero,
+	\begin{align*}
+		\alpha_n &\neq \mathrm{o}(\beta_n)
+	\end{align*}
+	However, $\forall \delta > 0$,
+	\begin{align*}
+		\alpha_n &= \mathrm{o}\left( n^{3 + \delta} \right)
+	\end{align*}
+\end{solution}
+
+\subsection{Representation of Polynomials}
+
+\subsubsection{Power series}	
+
+\begin{definition}[Power series representation of polynomials]
+	\begin{align*}
+		P_n(x) &= a_0 + a_1 x + \dots + a_n x^n
+	\end{align*}
+\end{definition}
+
+This representation may lead to loss of significant digits.
+
+\begin{question}
+	Let $P(x)$ represent a straight line.
+	\begin{align*}
+		P(6000) &= \frac{1}{3}\\
+		P(6001) &= -\frac{2}{3}
+	\end{align*}
+	If only 5 decimal digits are used, show that there is a loss of significant digits, if the power series representation of the polynomial is used.
+\end{question}
+
+\begin{solution}
+	$P(x)$ represents a straight line.
+	Therefore,
+	\begin{align*}
+		P(x) &= a x + b
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		6000 a + b &= \frac{1}{3}\\
+		6001 a + b &= -\frac{2}{3}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+			\begin{pmatrix}
+				6000 & 1\\
+				6001 & 1\\
+			\end{pmatrix}
+			\begin{pmatrix}
+				a\\
+				b\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				\frac{1}{3}\\
+				-\frac{2}{3}\\
+			\end{pmatrix}\\
+		\therefore
+			\begin{pmatrix}
+				a\\
+				b\\
+			\end{pmatrix}\\
+		&=
+			\frac{1}{|A|}
+			\begin{pmatrix}
+				1 & -1\\
+				-6001 & 6000
+			\end{pmatrix}
+			\begin{pmatrix}
+				\frac{1}{3}\\
+				-\frac{2}{3}\\
+			\end{pmatrix}\\
+		&=
+			-
+			\begin{pmatrix}
+				1\\
+				-6000.3\\
+			\end{pmatrix}\\
+		&=
+			\begin{pmatrix}
+				-1\\
+				6000.3\\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		a &= -1\\
+		b &= 6000.3
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		P(x) &= -x + 6000.3
+	\end{align*}
+	Substituting $6000$ and $6001$ in this expression,
+	\begin{align*}
+		P(6000) &= 0.3\\
+		P(6001) &= 0.7
+	\end{align*}
+	However, the most accurate values of $P(6000)$ and $P(6001)$, using 5 decimal digits only, should be
+	\begin{align*}
+		P(6000) &= 0.33333\\
+		P(6001) &= -0.66666
+	\end{align*}
+	Therefore, there is a loss of significant digits.
+\end{solution}
+
+\subsubsection{Shifted Power Series}
+
+\begin{definition}[Shifted power series representation of polynomials]
+	\begin{align*}
+		P_n(x) &= a_0 + a_1 (x - c) + \dots + a_n (x - c)^n
+	\end{align*}
+\end{definition}
+
+This representation is a power series shifted by $c$.
+Hence, this representation does not lead to loss of significant digits.
+
+\begin{question}
+	Let $P(x)$ be a straight line.
+	\begin{align*}
+		P(6000) &= \frac{1}{3}\\
+		P(6001) &= -\frac{2}{3}
+	\end{align*}
+	If only 5 decimal digits are used, show that there is no loss of significant digits, if the shifted power series representation of the polynomial is used, with $c = 6000$.
+\end{question}
+
+\begin{solution}
+	$P(x)$ represents a straight line.
+	Therefore,
+	\begin{align*}
+		P(x) &= a (x - 6000) + b
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		b &= \frac{1}{3}\\
+		a + b &= -0.66666\\
+		\therefore a &= -0.99999
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		P(x) &= -0.99999 (x - 6000) + 0.33333
+	\end{align*}
+	Substituting $6000$ and $6001$ in this expression,
+	\begin{align*}
+		P(6000) &= 0.33333\\
+		P(6001) &= -0.66666
+	\end{align*}
+	Therefore, there is no loss of significant digits, as the values of $P(6000)$ and $P(6001)$ are the most accurate values possible, using 5 decimal digits.
+\end{solution}
+
+\subsubsection{Newton's Form}
+
+\begin{definition}[Newton's form of representation of polynomials]
+	\begin{align*}
+		P_n(x) &= a_0 + a_1 (x - c_1) + \dots + a_n (x - c_1) \dots (x - c_n)
+	\end{align*}
+\end{definition}
+
+The number of multiplications needed to calculate $P_n(x)$ is 
+\begin{align*}
+	\sum\limits_{i = 1}^{n} i &= \frac{n (n + 1)}{2}
+\end{align*}
+The number of additions or subtractions needed to calculate $P_n(x)$ is 
+\begin{align*}
+	\sum\limits_{i = 1}^{n} i + n &= \frac{n (n + 1)}{2} + n
+\end{align*}
+Therefore, the total number of operations needed to calculate $P_n(x)$ is $\mathrm{O}(n^2)$.
+
+\subsubsection{Nested Newton's Form}
+
+\begin{definition}[Nested Newton's form of representation of polynomials]
+	\begin{align*}
+		P_n(x) &= a_0 + (x - c_1) \left( a_1 + (x - c_2) \left( a_2 + (x - c_3) \left( \dots \right) \right) \right)
+	\end{align*}
+\end{definition}
+
+The number of multiplications needed to calculate $P_n(x)$ is 
+\begin{align*}
+	\sum\limits_{i = 1}^{n} 1 &= n
+\end{align*}
+The number of additions or subtractions needed to calculate $P_n(x)$ is 
+\begin{align*}
+	\sum\limits_{i = 1}^{n} 2 &= 2 n
+\end{align*}
+Therefore, the total number of operations needed to calculate $P_n(x)$ is big-O of $\mathrm{O}(n)$.
+
+\subsection{Properties of Polynomials}
+
+\begin{theorem}
+	For a polynomial in shifted power series form,
+	\begin{align*}
+		P_n(x) &= P_n(c) + (x - c) q_{n - 1}(x)
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		P_n(x) &= a_0 + a_1 (x - c) + \dots + a_n(x - c)^n\\
+		&= a_0 + (x - c) \left( a_1 + a_2 (x - 2) + \dots + a_n (x - c)^{n - 1} \right)\\
+		&= a_0 + (x - c) q_{n - 1}(x)\\
+		&= P_n(c) + (x - c) q_{n - 1}(x)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}
+	If $c$ is a root of $P_n(x)$, i.e., if
+	\begin{align*}
+		P_n(c) &= 0
+	\end{align*}
+	then
+	\begin{align*}
+		P_n(x) &= (x - c) q_{n - 1}(x)
+	\end{align*}
+	If $c_1 \neq c_2$ are roots of $P_n(x)$, then
+	\begin{align*}
+		P_n(x) &= (x - c_1) (x - c_2) r_{n - 2}(x)
+	\end{align*}
+	Similarly, if $P_n(x)$ has $n$ different roots, then
+	\begin{align*}
+		P_n(x) &= A (x - c_1) \dots (x - c_n)
+	\end{align*}
+	where $A \in \mathbb{R}$.\\
+	If $P_n(x)$ has $n + 1$ different roots, then
+	\begin{align*}
+		P_n(x) &= A (x - c_1) \dots (x - c_n) (x - c_{n + 1})
+	\end{align*}
+	where $A = 0$.
+\end{theorem}
+
+\begin{theorem}
+	If $p(x)$ and $q(x)$ are polynomials of degree at most $n$, that satisfy
+	\begin{align*}
+		p(x_i) &= f(x_i)\\
+		q(x_i) &= f(x_i)
+	\end{align*}
+	for $i \in \{0,\dots,n\}$, then
+	\begin{align*}
+		p_n(x) &\equiv q_n(x)
+	\end{align*}
+	This means that there exists a unique polynomial with degree $n$ which passes through $n + 1$ points, i.e. $n + 1$ points define a unique $n$ degree polynomial.
+\end{theorem}
+
+\begin{proof}
+	Let
+	\begin{align*}
+		d_n(x) &= p_n(x) - q_n(x)
+	\end{align*}
+	Therefore, $d_n(x)$ is a polynomial of degree at most $n$, which has $n + 1$ roots.
+	Therefore,
+	\begin{align*}
+		d_n(x) \equiv 0
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p_n(x) &\equiv q_n(x)
+	\end{align*}
+\end{proof}
+
+\subsection{Interpolation}
+
+\begin{theorem}[Weierstrass Approximation Theorem]
+	Let $f(x) \in \mathrm{C} [a,b]$, i.e. it is continuous on $[a,b]$.
+	Let $\varepsilon > 0$.
+	Then there exists a polynomial $P(x)$ defined on $[a,b]$, such that $\forall x \in [a,b]$,
+	\begin{align*}
+		\left| f(x) - P(x) \right| &< \varepsilon
+	\end{align*}
+	\label{Weierstrass_Approximation_Theorem}
+\end{theorem}
+
 \end{document}
