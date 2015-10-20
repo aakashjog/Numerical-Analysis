@@ -253,4 +253,127 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 	\end{align*}
 \end{solution}
 
+\recitation
+
+\section{Interpolation by Polynomials}
+
+\begin{theorem}[Existence and Uniqueness Theorem]
+	There exists a unique polynomial $p_n(x)$ which approximates $f(x)$ between the sample points, i.e.
+	\begin{align*}
+		\left| e_n(x) \right| &= \left| f(x) - p_n(x) \right|
+	\end{align*}
+\end{theorem}
+
+\begin{question}
+	Find the interpolation polynomial for the data
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{c c}
+			$x_i$ & $f(x_i)$\\
+			$1$ & $3$\\
+			$2$ & $2$\\
+			$4$ & $1$\\
+		\end{tabular}
+	\end{table}
+\end{question}
+
+\begin{solution}
+	Let
+	\begin{align*}
+		p(x) &= a_0 + a_1 x + a_2 x^2
+	\end{align*}
+	be the required interpolation polynomial.\\
+	Therefore,
+	\begin{align*}
+		p(1) &= 3\\
+		\therefore 3 &= a_0 + a_1 \cdot 1 + a_2 \cdot 1^2\\
+		p(2) &= 2\\
+		\therefore 2 &= a_0 + a_1 \cdot 2 + a_2 \cdot 2^2\\
+		p(4) &= 1\\
+		\therefore 1 &= a_0 + a_1 \cdot 4 + a_2 \cdot 4^2\\
+	\end{align*}
+	Therefore,
+	\begin{align*}
+			\begin{pmatrix}
+				1 & 1 & 1^2\\
+				1 & 2 & 2^2\\
+				1 & 4 & 4^2\\
+			\end{pmatrix}
+			\begin{pmatrix}
+				a_0\\
+				a_1\\
+				a_2\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				3\\
+				2\\
+				1\\
+			\end{pmatrix}
+	\end{align*}
+	Therefore, solving,
+	\begin{align*}
+			\begin{pmatrix}
+				a_0\\
+				a_1\\
+				a_2\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				\frac{13}{3}\\
+				-\frac{3}{2}\\
+				\frac{1}{6}\\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p(x) &= \frac{13}{3} - \frac{3}{2} x + \frac{1}{6} x^2
+	\end{align*}
+\end{solution}
+
+\begin{definition}
+	Let the sample points be $x_0,\dots,x_{n - 1}$.\\
+	Lagrange polynomials are $n$ polynomials of degree $n - 1$, each of which is $0$ at all sample points, except one, at which it is $1$.\\
+	\begin{align*}
+		l_i(x) &= \frac{(x - x_0) \dots (x - x_{i - 1}) (x - x_{i + 1}) \dots (x - x_{n - 1})}{(x_i - x_0) \dots (x_i - x_{i - 1}) (x_i - x_{i + 1}) \dots (x_i - x_{n - 1})}
+	\end{align*}
+\end{definition}
+
+\begin{question}
+	Find the interpolation polynomial for the data
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{c c}
+			$x_i$ & $f(x_i)$\\
+			$1$ & $3$\\
+			$2$ & $2$\\
+			$4$ & $1$\\
+		\end{tabular}
+	\end{table}
+	using Lagrange polynomials.
+\end{question}
+
+\begin{solution}
+	Let
+	\begin{align*}
+		x_0 &= 1\\
+		x_1 &= 2\\
+		x_3 &= 4
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		l_0(x) &= \frac{(x - x_1) (x - x_2)}{(x_0 - x_1) (x_0 - x_2)}\\
+		&= \frac{(x - 2) (x - 4)}{(1 - 2) (1 - 4)}\\
+		l_1(x) &= \frac{(x - x_0) (x - x_2)}{(x_1 - x_0) (x_1 - x_2)}\\
+		&= \frac{(x - 1) (x - 4)}{(2 - 1) (2 - 4)}\\
+		l_2(x) &= \frac{(x - x_0) (x - x_1)}{(x_2 - x_0) (x_2 - x_1)}\\
+		&= \frac{(x - 1) (x - 2)}{(4 - 1) (4 - 2)}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p(x) &= f(x_0) l_0(x) + f(x_1) l_1(x) + f(x_2) l_2(x)\\
+		&= 3 l_0(x) + 2 l_1(x) + l_2(x)
+	\end{align*}
+\end{solution}
+
 \end{document}
