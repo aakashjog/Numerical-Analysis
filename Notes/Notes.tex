@@ -68,6 +68,8 @@
 
 \renewcommand{\tilde}{\widetilde}
 
+\renewcommand{\marginfont}{\scriptsize \color{blue}}
+
 \SetupExSheets{solution/print = true} %prints all solutions by default
 
 %opening
@@ -661,5 +663,390 @@ Therefore, the total number of operations needed to calculate $P_n(x)$ is big-O 
 	\end{align*}
 	\label{Weierstrass_Approximation_Theorem}
 \end{theorem}
+
+\begin{definition}[Interpolating polynomial]
+	$p(x)$ is said to be the interpolating polynomial of $f(x)$, if for all sample points $x_i$,
+	\begin{align*}
+		f(x_i) & = p(x_i)
+	\end{align*}
+\end{definition}
+
+\begin{theorem}
+	Let $f(x)$ such that $\forall i \in \{0,\dots,n\}$,
+	\begin{align*}
+		f(x_i) & = y_i
+	\end{align*}
+	Then, there exists a unique polynomial $p(x)$ of degree at most $n$, which interpolates $f(x)$ at all sample points $x_i$.
+\end{theorem}
+
+\subsection{Direct Method}
+
+\begin{definition}[Van der Monde matrix]
+	Let
+	\begin{align*}
+		p(x) & = \sum\limits_{i = 0}^{n} a_i x^i
+	\end{align*}
+	Let
+	\begin{align*}
+		f(x_i) & = y_i
+	\end{align*}
+	Therefore, as
+	\begin{align*}
+		p(x_i) & = f(x_i)
+	\end{align*}
+	the constraints are
+	\begin{align*}
+		a_0 + a_1 x_0 + \dots + a_n {x_0}^n & = y_0  \\
+		a_1 + a_1 x_1 + \dots + a_n {x_1}^n & = y_1  \\
+                                                    & \vdots \\
+		a_n + a_1 x_n + \dots + a_n {x_n}^n & = y_n  \\
+	\end{align*}
+	Therefore,
+	\begin{align*}
+			\begin{pmatrix}
+				1      & x_0    & {x_0}^2 & \dots & {x_0}^n \\
+				1      & x_1    & {x_1}^2 & \dots & {x_1}^n \\
+				1      & x_2    & {x_2}^2 & \dots & {x_2}^n \\
+				\vdots & \vdots & \vdots  &       & \vdots  \\
+				1      & x_n    & {x_n}^2 & \dots & {x_n}^n \\
+			\end{pmatrix}
+			\begin{pmatrix}
+				a_0    \\
+				a_1    \\
+				a_2    \\
+				\vdots \\
+				a_n    \\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				y_0    \\
+				y_1    \\
+				y_2    \\
+				\vdots \\
+				y_n    \\
+			\end{pmatrix}
+	\end{align*}
+	The matrix
+	\begin{align*}
+		V &=
+			\begin{pmatrix}
+				1      & x_0    & {x_0}^2 & \dots & {x_0}^n \\
+				1      & x_1    & {x_1}^2 & \dots & {x_1}^n \\
+				1      & x_2    & {x_2}^2 & \dots & {x_2}^n \\
+				\vdots & \vdots & \vdots  &       & \vdots  \\
+				1      & x_n    & {x_n}^2 & \dots & {x_n}^n \\
+			\end{pmatrix}
+	\end{align*}
+	is called the Van der Monde matrix.
+\end{definition}
+
+\begin{theorem}
+	The Van der Monde matrix is invertible, and hence there exists a unique matrix of coefficients $a_0 , \dots , a_n$, and hence the interpolating polynomial $p(x)$ is unique.
+\end{theorem}
+
+\subsection{Lagrange's Interpolation}
+
+\begin{definition}[Lagrange polynomials]
+	Let
+	\begin{align*}
+		L_k(x) & = \prod\limits_{i = 0 ; i \neq k}^{n} (x - x_i)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		L_k(x_i) &=
+			\begin{cases}
+				0 & ;\quad i \neq k \\
+				1 & ;\quad i = k    \\
+			\end{cases}
+	\end{align*}
+	Let
+	\begin{align*}
+		l_k(x) & = \frac{L_k(x)}{L_k(x_k)}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		l_k(x_i) &=
+			\begin{cases}
+				0 & ;\quad i \neq k \\
+				1 & ;\quad i = k    \\
+			\end{cases}
+	\end{align*}
+	The polynomials $l_i(x)$ are called Lagrange polynomials.
+\end{definition}
+
+\begin{theorem}
+	Let
+	\begin{align*}
+		p_n(x) & = \sum\limits_{i = 0}^{n} f(x_i) l_i(x)
+	\end{align*}
+	where $l_i(x)$ are Lagrange polynomials.\\
+	Then, $p_n(x)$ is the interpolating polynomial of $f(x)$.
+\end{theorem}
+
+\begin{question}
+	Which polynomial of degree 2 interpolates the below data?
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{c|c}
+			$x$ & $f(x)$\\
+			\hline
+			$1$ & $1$\\
+			$2$ & $3$\\
+			$3$ & $7$\\
+		\end{tabular}
+	\end{table}
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		L_k(x) & = \prod\limits_{i = 0 ; i \neq k}^{n} (x - x_i)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		L_1(x) & = (x - 2) (x - 3) \\
+		L_2(x) & = (x - 1) (x - 3) \\
+		L_3(x) & = (x - 1) (x - 2)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		L_1(1) & = (1 - 2) (1 - 3) \\
+                       & = 2               \\
+		L_2(2) & = (2 - 1) (2 - 3) \\
+                       & = -1              \\
+		L_3(3) & = (3 - 1) (3 - 2) \\
+                       & = 2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		l_k(x) & = \frac{L_k(x)}{L_k(x_k)}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		l_1(x) & = \frac{L_1(x)}{L_1(1)}       \\
+                       & = \frac{1}{2} (x - 2) (x - 3) \\
+		l_2(x) & = \frac{L_2(x)}{L_2(1)}       \\
+                       & = -(x - 1) (x - 3)            \\
+		l_3(x) & = \frac{L_3(x)}{L_3(1)}       \\
+                       & = \frac{1}{2} (x - 1) (x - 2)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p_2(x) & = \sum f(x_i) l_i(x) \\
+                       & = \frac{1}{2} (x - 2) (x - 3) - 3 (x - 1) (x - 3) + \frac{7}{2} (x - 1) (x - 2)
+	\end{align*}
+\end{solution}
+
+\begin{question}
+	Given
+	\begin{align*}
+		k(z) & = \int\limits_{0}^{\frac{\pi}{2}} \frac{\dif x}{\sqrt{1 - (\sin z)^2 (\sin x)^2}}
+	\end{align*}
+	and
+	\begin{align*}
+		k(1) & = 1.5709 \\
+		k(4) & = 1.5727 \\
+		k(6) & = 1.5751
+	\end{align*}
+	approximate $k(3.5)$.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		l_k(x) & = \frac{\prod\limits_{i = 0 ; i \neq k}^{n} (x - x_i)}{\prod\limits_{i = 0 ; i \neq k}^{n} (x_k - x_i)}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		l_1(x) & = \frac{(x - 4) (x - 6)}{(1 - 4) (1 - 6)} \\
+		l_4(x) & = \frac{(x - 1) (x - 6)}{(4 - 1) (4 - 6)} \\
+		l_6(x) & = \frac{(x - 1) (x - 4)}{(6 - 1) (6 - 4)}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		l_1(3.5) & = \frac{(3.5 - 4) (3.5 - 6)}{(1 - 4) (1 - 6)} \\
+                         & = 0.08333                                     \\
+		l_4(3.5) & = \frac{(3.5 - 1) (3.5 - 6)}{(4 - 1) (4 - 6)} \\
+                         & = 1.04167                                     \\
+		l_6(3.5) & = \frac{(3.5 - 1) (3.5 - 4)}{(6 - 1) (6 - 4)} \\
+                         & = -0.125
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p_2(x)              & = \sum f(x_i) l_k(x)                                          \\
+		\therefore p_2(3.5) & = \sum f(x_1) l_k(3.5)                                        \\
+                                    & = (1.5709) (0.08333) + (1.5727) (1.04167) + (1.5751) (-0.125) \\
+                                    & = 1.57225
+	\end{align*}
+\end{solution}
+
+\subsection{Hermite Polynomials}
+
+\begin{definition}
+	Let the given data be of the form $\left( x_i , f(x_i) , f'(x_i) \right)$, where $i = 0,\dots,n$.\\
+	$H_{2 n + 1}$ is called the Hermite polynomial of $f(x)$.\\
+	For $H_{2 n + 1}$ to be the interpolation polynomial of $f(x)$, the constraints are
+	\begin{align*}
+		H_{2 n + 1}(x_i)  & = f(x_i) \\
+		H_{2 n + 1}'(x_i) & = f'(x_i)
+	\end{align*}
+	Therefore, the number of constraints are $2 n + 2$.\\
+	Hence, the polynomial is of degree at most $2 n + 1$.\\
+\end{definition}
+
+\begin{theorem}
+	Let
+	\begin{align*}
+		H_{2 n + 1}(x) & = \sum\limits_{i = 0}^{n} f(x_i) \psi_{n,i}(x) + \sum\limits_{i = 0}^{n} f'(x_i) \varphi_{n,i}(x)
+	\end{align*}
+	Let
+	\begin{align*}
+		\delta_{i j} &=
+			\begin{cases}
+				0 & ;\quad i \neq j \\
+				1 & ;\quad i = j    \\
+			\end{cases}
+	\end{align*}
+	If the polynomials $\psi$ and $\varphi$ satisfy
+	\begin{align*}
+		\psi_{n,i}(x_j)        & = \delta_{i j} \\
+		{\psi_{n,i}}'(x_j)     & = 0            \\
+		\varphi_{n,i}(x_j)     & = 0            \\
+		{\varphi'_{n,i}}'(x_j) & = \delta_{i j}
+	\end{align*}
+	then the polynomial $H_{2 n + 1}$ is the interpolation polynomial of $f(x)$.
+\end{theorem}
+
+\subsection{Newton's Interpolation}
+
+\begin{definition}[Newton's polynomial]
+	The polynomial
+	\begin{align*}
+		p_n(x) & = \sum\limits_{i = 0}^{n} A_i \prod\limits_{j = 0}^{i - 1} (x - x_j)
+	\end{align*}
+	is called Newton's polynomial.
+\end{definition}
+
+\begin{theorem}
+	If $p_k(x)$, constructed based on $x_1,\dots,x_k$ is known, then $p_{k + 1}(x)$, based on $x_1,\dots,x_{k + 1}$ can be constructed as
+	\begin{align*}
+		p_{k + 1}(x) & = p_k(x) + A_{k + 1} (x - x_0) \dots (x - x_k)
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	For $i = 0,\dots,k$,
+	\begin{align*}
+		p_{k + 1}(x_i) & = p_k(x_i) + A_{k + 1} \prod\limits_{j = 0}^{k} (x_i - x_j) \\
+                               & = p_k(x_i) + 0
+		\marginnote
+		{
+			$\forall i = 0,\dots,k$, $(x_i - x_i) = 0$.
+			Therefore, if $i = j$, $(x_i - x_j) = 0$.
+			Therefore, $\prod (x_i - x_j) = 0$
+		}
+	\end{align*}
+	For $i = k + 1$,
+	\begin{align*}
+		p_{k + 1}(x_{k + 1}) & = p_k(x_{k + 1}) + A_{k + 1} \prod\limits_{j = 0}^{k} (x_{k + 1} - x_j) \\
+                                     & = f(x_{k + 1})
+	\end{align*}
+	where $A_{k + 1}$ can be calculated using $p_k(x_{k + 1})$ and $f(x_{k + 1})$.\\
+	Therefore,\\
+	For $n = 1$,
+	\begin{align*}
+		p_0(x) & = A_0 \\
+                       & = f(x_0)
+	\end{align*}
+	For $n = 2$,
+	\begin{align*}
+		p_1(x) & = p_0(x) + A_1 (x - x_0) \\
+                       & = f(x_0) - A_1(x - x_0)  \\
+                       & = f(x_1)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		A_1 & = \frac{f(x_1) - f(x_0)}{x_1 - x_0} \\
+                    & = f[x_0,x_1]
+	\end{align*}
+	For $n = 3$,
+	\begin{align*}
+		p_2(x) & = p_1(x) + A_2 (x - x_0) (x - x_1)                        \\
+                       & = f(x_0) + f[x_0,x_1] (x - x_0)                           \\
+                       & = f(x_0) + f[x_0,x_1] (x - x_0) + A_2 (x - x_0) (x - x_1) \\
+                       & = f(x_2)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		A_2 & = \frac{1}{(x_2 - x_0) (x_2 - x_1)} \left( f(x_2) - f(x_0) - f[x_0,x_1] (x_2 - x_0) \right) \\
+                    & = f[x_0,x_1,x_2]
+	\end{align*}
+	and so on.\\
+	In general,
+	\begin{align*}
+		A_k & = f[x_0,\dots,x_k]
+	\end{align*}
+\end{proof}
+
+\begin{definition}[Divided difference]
+	\begin{align*}
+		f[x_0,\dots,x_k] & = \frac{f[x_1,\dots,x_k] - f[x_0,\dots,x_{k - 1]}}{x_k - x_0} \\
+		f[x_0]           & = f(x_0)
+	\end{align*}
+	is called the $k$th order divided difference of $f(x)$.
+\end{definition}
+
+\begin{question}
+	Given
+	\begin{align*}
+		k(z) & = \int\limits_{0}^{\frac{\pi}{2}} \frac{\dif x}{\sqrt{1 - (\sin z)^2 (\sin x)^2}}
+	\end{align*}
+	and
+	\begin{align*}
+		k(1) & = 1.5709 \\
+		k(4) & = 1.5727 \\
+		k(6) & = 1.5751
+	\end{align*}
+	approximate $k(3.5)$.
+\end{question}
+
+\begin{solution}
+	For the first order divided differences,
+	\begin{align*}
+		k[x_i] & = k(x_i)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		k[1] & = k(1)   \\
+                     & = 1.5709 \\
+		k[4] & = k(4)   \\
+                     & = 1.5727 \\
+		k[6] & = k(6)   \\
+                     & = 1.5751
+	\end{align*}
+	For the second order divided differences,
+	\begin{align*}
+		k[x_i,x_j] & = \frac{k[i] - k[j]}{i - j}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		k[1,4] & = \frac{k[1] - k[4]}{1 - 4} \\
+                       & = \frac{1.5727 - 1.5709}{3} \\
+		k[4,6] & = \frac{k[4] - k[6]}{4 - 6} \\
+                       & = \frac{1.5751 - 1.5727}{2}
+	\end{align*}
+	For the third order divided differences,
+	\begin{align*}
+		k[x_i,x_j,x_k] & = \frac{k[i,j] - k[j,k]}{i - k}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		k[1,4,6] & = \frac{k[1,4] - k[4,6]}{1 - 6}
+	\end{align*}
+	Hence,
+	\begin{align*}
+		A_0 & = k[1]   \\
+		A_1 & = k[1,4] \\
+		A_2 & = k[1,4,6]
+	\end{align*}
+\end{solution}
 
 \end{document}
