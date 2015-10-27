@@ -376,4 +376,91 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 	\end{align*}
 \end{solution}
 
+\recitation
+
+\begin{question}
+	Given
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{c c}
+			$x_i$           & $f(x_i)$             \\
+			$0$             & $0$                  \\
+			$\frac{\pi}{4}$ & $\frac{\sqrt{2}}{2}$ \\
+			$\frac{\pi}{2}$ & $1$                  \\
+		\end{tabular}
+	\end{table}
+	Find the interpolating polynomial in Newton's form.
+\end{question}
+
+\begin{solution}
+	The interpolating polynomial is
+	\begin{align*}
+		p_2(x) & = A_0 + A_1 (x - x_0) + A_2 (x - x_0) (x - x_1)
+	\end{align*}
+	where
+	\begin{align*}
+		A_k & = f[x_0,\dots,x_k]
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\therefore f[0]                          & = f(0)                          \\
+                                                         & = 0                             \\
+		\therefore f\left[ \frac{\pi}{4} \right] & = f\left( \frac{\pi}{4} \right) \\
+                                                         & = \frac{\sqrt{2}}{2}            \\
+		\therefore f\left[ \frac{\pi}{2} \right] & = f\left( \frac{\pi}{2} \right) \\
+                                                         & = 1
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f\left[ 0,\frac{\pi}{4} \right]             & = \frac{f\left[ \frac{\pi}{4} \right] - f[0]}{\frac{\pi}{4} - 0}                                      \\
+                                                            & = \frac{\frac{\sqrt{2}}{2} - 0}{\frac{\pi}{4}}                                                        \\
+		f\left[ \frac{\pi}{4},\frac{\pi}{2} \right] & = \frac{f\left[ \frac{\pi}{2} \right] - f\left[ \frac{\pi}{4} \right]}{\frac{\pi}{2} - \frac{\pi}{4}} \\
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f\left[ 0,\frac{\pi}{4},\frac{\pi}{2} \right] & = \frac{f\left[ \frac{\pi}{4},\frac{\pi}{2} \right] - f\left[ 0,\frac{\pi}{4} \right]}{\frac{\pi}{2} - 0} \\
+                                                              & = \frac{8 (1 - \sqrt{2})}{\pi^2}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		A_0 & = 0                      \\
+		A_1 & = \frac{2 \sqrt{2}}{\pi} \\
+		A_2 & = \frac{8 (1 - \sqrt{2})}{\pi^2}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p_2(x) & = \frac{2 \sqrt{2}}{\pi} x + \frac{8 (1 - \sqrt{2})}{\pi^2} (x) \left( x - \frac{\pi}{4} \right)
+	\end{align*}
+\end{solution}
+
+\begin{question}
+	$\sin\left( \frac{\pi}{3} \right)$ was approximated using Newton's method, at sample points $0$, $\frac{\pi}{4}$, $\frac{\pi}{2}$, to be
+	\begin{align*}
+		p_2\left( \frac{\pi}{3} \right) & = \frac{2 \sqrt{2}}{3} + \frac{8 (1 - \sqrt{2})}{36} \\
+                                                & = 0.8507
+	\end{align*}
+	Find the bounds on the error in this approximation.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		|e_n(x)| & = \left| f(x) - p_n(x) \right| \\
+                         & \le \left| \frac{f^{(n + 1)}(c)}{(n + 1)!} \prod\limits_{j = 0}^{n} (x - x_j) \right|
+	\end{align*}
+	where $c \in \left[ \min\{x_0,\dots,x_n,x\} , \max\{x_0,\dots,x_n,x\} \right]$.\\
+	Therefore,
+	\begin{align*}
+		|e_2(x)|                                                  & \le \left| \frac{\sin^{(3)}(c)}{3!} \prod\limits_{j = 0}^{3} (x - x_j) \right|                                                                                         \\
+		\therefore \left| e_2\left( \frac{\pi}{3} \right) \right| & \le \left| \frac{\sin^{(3)}(c)}{3!} \prod\limits_{j = 0}^{3} \left( \frac{\pi}{3} - x_j \right) \right|                                                                \\
+                                                                          & \le \left| \frac{\sin^{(3)}(c)}{3!} \left( \frac{\pi}{3} - 0 \right) \left( \frac{\pi}{3} - \frac{\pi}{4} \right) \left( \frac{\pi}{3} - \frac{\pi}{2} \right) \right| \\
+                                                                          & \le \left| \frac{-\cos(c)}{6} \frac{\pi^3}{(3) (12) (6)} \right|                                                                                                       \\
+                                                                          & \le \left| \frac{-\cos(c) \pi^3}{1296} \right|
+	\end{align*}
+	Therefore, as $\left| \cos(c) \right|$ is bounded by $0$ and $1$,
+	\begin{align*}
+		\left| e_2\left( \frac{\pi}{3} \right) \right| & \le \left| \frac{\pi^3}{1296} \right| \\
+                                                               & < 0.0242
+	\end{align*}
+\end{solution}
+
 \end{document}
