@@ -11,6 +11,8 @@
 *.alg
 *.bbl
 *.blg
+*.fdb_latexmk
+*.fls
 *.tui
 *.top
 *.tmp
