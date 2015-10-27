@@ -1,0 +1,402 @@
+\documentclass[fleqn, a4paper, 11pt, oneside]{amsart}
+%\usepackage[top = 2cm, bottom = 1cm, left = 1cm, right = 1cm]{geometry}
+\usepackage{exsheets, tasks}
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units, space-before-unit]{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+\usetikzlibrary{calc, hobby, patterns, intersections, decorations.markings}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac} %inline fractions
+\usepackage{enumerate,enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage{circuitikz}[american voltages, american currents] %circuit diagrams
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\newcommand{\AxisRotator}[1][rotate=0]{
+	\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
+} %rotation symbols on axes
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}
+\renewcommand{\thesection}{(\arabic{section})}
+
+%section headings on left
+\makeatletter
+\def\specialsection{\@startsection{section}{1}%
+	\z@{\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\centering}}% DELETED
+	{\normalfont}}% NEW
+\def\section{\@startsection{section}{1}%
+	\z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\scshape\centering}}% DELETED
+	{\normalfont\scshape}}% NEW
+\makeatother
+
+%forces newline after subsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+	\z@{.5\linespacing\@plus.7\linespacing}{.1\linespacing}%
+	{\normalfont\itshape}}
+\makeatother
+
+\settasks{counter-format = tsk[1].}
+
+\SetupExSheets{solution/print = true}
+
+%opening
+\title{Numerical Analysis : Assignment 2}
+\author
+{
+	Aakash Jog\\
+	ID : 989323563
+}
+\date{\formatdate{27}{10}{2015}}
+
+\begin{document}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\begin{question}
+	\begin{enumerate}
+		\item
+			Compute the interpolating polynomial for $f(x) = \sqrt{x}$, that interpolates $f$ at the sample points $\left\{ \frac{1}{4} , 1 , 4 \right\}$.
+		\item
+			Compute the interpolating polynomial for $g(x) = 2^x$, that interpolates $g$ at the sample points $\{-1,0,1\}$.
+		\item
+			Approximate the number $\sqrt{2}$ in two ways.
+			First by interpolating polynomial of $f$ from $1$, and then by the interpolating polynomial of $g$ from $2$.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			Let
+			\begin{align*}
+				p_f(x) &= a_0 + a_1 x + a_2 x^2
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p_f\left( \frac{1}{4} \right) &= a_0 + \frac{1}{4} a_1 + \frac{1}{16} a_2\\
+				\therefore \frac{1}{2} &= a_0 + \frac{1}{4} a_1 + \frac{1}{16} a_2\\
+				p_f(1) &= a_0 + a_1 + a_2\\
+				\therefore 1 &= a_0 + a_1 + a_2\\
+				p_f(4) &= a_0 + 4 a_1 + 16 a_2\\
+				\therefore 2 &= a_0 + 4 a_1 + 16 a_2
+			\end{align*}
+			Therefore,
+			\begin{align*}
+					\begin{pmatrix}
+						1 & \frac{1}{4} & \frac{1}{16}\\
+						1 & 1 & 1\\
+						1 & 4 & 16\\
+					\end{pmatrix}
+					\begin{pmatrix}
+						a_0\\
+						a_1\\
+						a_2\\
+					\end{pmatrix}
+				&=
+					\begin{pmatrix}
+						\frac{1}{2}\\
+						1\\
+						2\\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+					\begin{pmatrix}
+						a_0\\
+						a_1\\
+						a_2\\
+					\end{pmatrix}
+				&=
+					\begin{pmatrix}
+						\frac{14}{45}\\
+						\frac{7}{9}\\
+						-\frac{4}{45}\\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p_f(x) &= \frac{14}{45} + \frac{7}{9} x - \frac{4}{45} x^2
+			\end{align*}
+		\item
+			Let
+			\begin{align*}
+				p_g(x) &= b_0 + b_1 x + b_2 x^2
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p_g(-1) &= b_0 - b_1 + b_2\\
+				\therefore \frac{1}{2} &= b_0 - b_1 + b_2\\
+				p_g(0) &= b_0\\
+				\therefore 1 &= b_0\\
+				p_g(1) &= b_0 + b_1 + b_2\\
+				\therefore 2 &= b_0 + b_1 + b_2
+			\end{align*}
+			Therefore,
+			\begin{align*}
+					\begin{pmatrix}
+						1 & -1 & 1\\
+						1 & 0 & 0\\
+						1 & 1 & 1\\
+					\end{pmatrix}
+					\begin{pmatrix}
+						b_0\\
+						b_1\\
+						b_2\\
+					\end{pmatrix}
+				&=
+					\begin{pmatrix}
+						\frac{1}{2}\\
+						1\\
+						2\\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+					\begin{pmatrix}
+						b_0\\
+						b_1\\
+						b_2\\
+					\end{pmatrix}
+				&=
+					\begin{pmatrix}
+						1\\
+						\frac{3}{4}\\
+						\frac{1}{4}\\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p_g(x) &= 1 + \frac{3}{4} x + \frac{1}{4} x^2
+			\end{align*}
+		\item
+			\begin{align*}
+				p_f(x) &= \frac{14}{45} + \frac{7}{9} x - \frac{4}{45} x^2\\
+				\therefore \sqrt{2} &= \frac{14}{45} + \frac{7}{9} \cdot 2 - \frac{4}{45} \cdot 4\\
+				&= \frac{14}{45} + \frac{14}{9} - \frac{16}{45}\\
+				&= \frac{14 + 70 - 16}{45}\\
+				&= \frac{68}{45}
+			\end{align*}
+			\begin{align*}
+				p_g(x) &= 1 + \frac{3}{4} x + \frac{1}{4} x^2\\
+				\therefore \sqrt{2} &= 1 + \frac{3}{4} \cdot \frac{1}{2} + \frac{1}{4} \cdot \frac{1}{4}\\
+				&= 1 + \frac{3}{8} + \frac{1}{16}\\
+				&= \frac{16 + 6 + 1}{16}\\
+				&= \frac{23}{16}
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Consider the interpolation data
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			$x_i$ & $y_i$\\
+			\hline
+			$-1$ & $-1$\\
+			$0$ & $2$\\
+			$1$ & $5$\\
+			\hline
+		\end{tabular}
+	\end{table}
+	\begin{enumerate}
+		\item
+			Find the interpolating polynomial using Lagrange polynomials.
+		\item
+			Find the interpolating polynomial using Newton's method.
+		\item
+			Is the polynomial you got of degree 2?
+			Does this contradict the uniqueness and existence of the interpolating polynomial?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				x_0 &= -1\\
+				x_1 &= 0\\
+				x_2 &= 1
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				l_0(x) &= \frac{(x - x_1) (x - x_2)}{(x_0 - x_1) (x_0 - x_2)}\\
+				&= \frac{(x - 0) (x - 1)}{(-1 - 0) (-1 - 1)}\\
+				&= \frac{(x) (x - 1)}{2}\\
+				l_1(x) &= \frac{(x - x_0) (x - x_2)}{(x_1 - x_0) (x_1 - x_2)}\\
+				&= \frac{(x + 1) (x - 1)}{(0 + 1) (0 - 1)}\\
+				&= -(x + 1) (x - 1)\\
+				l_2(x) &= \frac{(x - x_0) (x - x_1)}{(x_2 - x_0) (x_2 - x_1)}\\
+				&= \frac{(x + 1) (x - 0)}{(1 + 1) (1 - 0)}\\
+				&= \frac{(x) (x + 1)}{2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p(x) &= f(x_0) l_0(x) + f(x_1) l_1(x) + f(x_2) l_2(x)\\
+				&= -\frac{(x) (x - 1)}{2} - 2 (x + 1) (x - 1) + 5 \frac{(x) (x + 1)}{2}\\
+				&= -\frac{x^2 - x}{2} - 2 (x^2 - 1) + 5 \frac{x^2 + x}{2}\\
+				&= \frac{4 x^2 + 6 x}{2} - 2 x^2 + 2\\
+				&= 2 x^2 + 3 x - 2 x^2 + 2\\
+				&= 3 x + 2
+			\end{align*}
+		\item
+
+		\item
+			The polynomial is of degree 1.
+			However this does not contradict the uniqueness and existence of the interpolating polynomial, as all points $(x_i,y_i)$ are collinear.
+			Hence, the polynomial represents a line through these points, and not a parabola.
+			If one of the points would not have lied on the straight line defined by the other two points, the interpolating polynomial would have been of degree 2.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let $x_0$, $x_1$, $x_2$ be three points.
+	We want to approximate the function $f(x)$ using a polynomial $p$ of degree up to 2 that satisfies
+	\begin{align*}
+		p(x_0) &= f(x_0)\\
+		p'(x_1) &= f'(x_1)\\
+		p(x_2) &= f(x_2)
+	\end{align*}
+	Assume that $x_0 \neq x_2$, and prove that $p(x)$ exists and is unique if and only if
+	\begin{align*}
+		x_1 &\neq \frac{x_0 + x_2}{2}
+	\end{align*}
+	Hint: Note that this is not the standard interpolation problem.
+	Write $p(x)$ in its standard form, and derive a system of linear equations with polynomial coefficients as the unknowns.
+	For a system of linear equations, what is the condition which is equivalent to existence and uniqueness of a solution?
+\end{question}
+
+\begin{solution}
+	Let
+	\begin{align*}
+		p(x) &= a_0 + a_1 x + a_2 x^2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p(x_0) &= a_0 + a_1 x_0 + a_2 {x_0}^2\\
+		p(x_1) &= a_0 + a_1 x_1 + a_2 {x_1}^2\\
+		p(x_2) &= a_0 + a_1 x_2 + a_2 {x_2}^2\\
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		V &=
+			\begin{pmatrix}
+				1 & x_0 & {x_0}^2\\
+				1 & x_1 & {x_1}^2\\
+				1 & x_2 & {x_2}^2\\
+			\end{pmatrix}
+	\end{align*}
+	Therefore, as the Van der Monde matrix must be invertible,
+	\begin{align*}
+		|V| &\neq 0\\
+		\therefore 0 &\neq \left( x_1 {x_2}^2 - x_2 {x_1}^2 \right) - x_0 \left( {x_2}^2 - {x_1}^2 \right) + {x_0}^2 (x_2 - x_1)\\
+		\therefore 0 &\neq x_1 {x_2}^2 - x_2 {x_1}^2 - x_0 {x_2}^2 + x_0 {x_1}^2 + {x_0}^2 x_2 - {x_0}^2 x_1\\
+		&= (x_0 - x_1) (x_1 - x_2) (x_2 - x_0)
+	\end{align*}
+	As $x_0 \neq x_2$,
+	\begin{align*}
+		(x_2 - x_0) &\neq 0
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		|V| &\neq 0\\
+		\iff (x_0 - x_1) (x_1 - x_2) &\neq 0
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x_1 &\neq \frac{x_0 + x_2}{2}
+	\end{align*}
+	\qed
+\end{solution}
+
+\begin{question}
+	Let $l_k(x)$, $k = 0,\dots,n$ be the Lagrange polynomials with respect to the points $x_0,\dots,x_n$.
+	Show
+	\begin{enumerate}
+		\item
+			for any $x \in \mathbb{R}$,
+			\begin{align*}
+				\sum\limits_{k = 0}^{n} l_k(x) &= 1
+			\end{align*}
+		\item
+			for any $x \in \mathbb{R}$ and $m = 0,\dots,n$,
+			\begin{align*}
+				\sum\limits_{k = 0}^{n} {x_k}^m l_k(x) &= x^m
+			\end{align*}
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				l_k(x) &= \frac{(x - x_0) \dots (x - x_{k - 1}) (x - x_{k + 1}) \dots (x - x_n)}{(x_k - x_0) \dots (x_k - x_{k - 1}) (x_k - x_{k + 1}) \dots (x_k - x_n)}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p(x) &= \sum\limits_{k = 1}^{n} f(x_k) l_k(x)\\
+			\end{align*}
+			Therefore, if $p(x) = f(x) = 1$,
+			\begin{align*}
+				1 &= \sum\limits_{k = 1}^{n} l_k(x)
+			\end{align*}
+		\item
+			By definition,
+			\begin{align*}
+				l_k(x_i) &=
+					\begin{cases}
+						1 &\quad k = i\\
+						0 &\quad k \neq i\\
+					\end{cases}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				{x_k}^m l_k(x_i) &=
+					\begin{cases}
+						{x_k}^m &\quad k = i\\
+						0 &\quad k \neq i\\
+					\end{cases}
+			\end{align*}
+			Also,
+			\begin{align*}
+				\sum\limits_{k = 0}^{n} l_k(x) &= 1
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\sum\limits_{k = 0}^{n} {x_k}^m l_k(x) &= x^m
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\end{document}
