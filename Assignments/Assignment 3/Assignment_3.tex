@@ -1,0 +1,173 @@
+\documentclass[fleqn, a4paper, 11pt, oneside]{amsart}
+%\usepackage[top = 2cm, bottom = 1cm, left = 1cm, right = 1cm]{geometry}
+\usepackage{exsheets, tasks}
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units, space-before-unit]{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+\usetikzlibrary{calc, hobby, patterns, intersections, decorations.markings}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac} %inline fractions
+\usepackage{enumerate,enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage{circuitikz}[american voltages, american currents] %circuit diagrams
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\newcommand{\AxisRotator}[1][rotate=0]{
+	\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
+} %rotation symbols on axes
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}
+\renewcommand{\thesection}{(\arabic{section})}
+
+%section headings on left
+\makeatletter
+\def\specialsection{\@startsection{section}{1}%
+	\z@{\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\centering}}% DELETED
+	{\normalfont}}% NEW
+\def\section{\@startsection{section}{1}%
+	\z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\scshape\centering}}% DELETED
+	{\normalfont\scshape}}% NEW
+\makeatother
+
+%forces newline after subsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+	\z@{.5\linespacing\@plus.7\linespacing}{.1\linespacing}%
+	{\normalfont\itshape}}
+\makeatother
+
+\settasks{counter-format = tsk[1].}
+
+\SetupExSheets{solution/print = true}
+
+%opening
+\title{Numerical Analysis : Assignment 3}
+\author
+{
+	Aakash Jog\\
+	ID : 989323563
+}
+\date{\formatdate{3}{11}{2015}}
+
+\begin{document}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\begin{question}
+	Show that $f[x_0,\dots,x_n]$ does not depend on the order of the points $\{x_0,\dots,x_n\}$.
+\end{question}
+
+\begin{solution}
+	If $n = 1$,
+	\begin{align*}
+		f[x_0,x_1]            & = \frac{f(x_0) - f(x_1)}{x_0 - x_1} \\
+		f[x_1,x_0]            & = \frac{f(x_1) - f(x_0)}{x_1 - x_0} \\
+		\therefore f[x_0,x_1] & = f[x_1,x_0]
+	\end{align*}
+	If possible let
+	\begin{align*}
+		f[x_0,\dots,x_k,x_{k + 1},\dots,x_n] & = f[x_0,\dots,x_{k + 1},x_k,\dots,x_n]
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f[x_0,\dots,x_{n + 1}] & = \frac{f[x_1,\dots,x_k,x_{k + 1},\dots,x_{n + 1}] - f[x_0,\dots,x_k,x_{k + 1},\dots,x_n]}{x_{n + 1} - x_0} \\
+                                       & = \frac{f[x_1,\dots,x_{k + 1},x_k,\dots,x_{n + 1}] - f[x_0,\dots,x_{k + 1},x_k,\dots,x_n]}{x_{n + 1} - x_0} \\
+                                       & = f[x_0,\dots,x_{k + 1},x_k,\dots,x_{n + 1}]
+	\end{align*}
+	Therefore, by induction, $f[x_0,\dots,x_n]$ does no depend on the order of the points $\{x_0,\dots,x_n\}$.
+	\qed
+\end{solution}
+
+\addtocounter{question}{1}
+
+\begin{question}
+	Let $f : [0,1] \to \mathbb{R}$ be defined as
+	\begin{align*}
+		f(x) & = e^{-x}
+	\end{align*}
+	Consider the $n + 1$ sample points $\{x_0,\dots,x_n\}$ in $[0,1]$, and the interpolating polynomial $p_n(x)$ of $f(x)$ at these points.
+	\begin{enumerate}
+		\item
+			Show that $\forall x \in [0,1]$,
+			\begin{align*}
+				\left| (x - x_0) \dots (x - x_n) \right| & \le 1
+			\end{align*}
+		\item
+			Prove
+			\begin{align*}
+				\left| e_n(x) \right| & = \left| f(x) - p_n(x) \right| \\
+                                                      & \le \frac{1}{n!}
+			\end{align*}
+		\item
+			How many sample points do we need if we require an approximation of $f$ with error less than $10^{-3}$?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin = *]
+		\item
+			As $x \in [0,1]$, and all $x_j \in [0,1]$,
+			\begin{align*}
+				|x - x_j| & \le 1
+			\end{align*}
+			for every $j$.\\
+			Therefore,
+			\begin{align*}
+				\prod (x - x_i) & \le 1
+			\end{align*}
+			\qed
+		\item
+			\begin{align*}
+				\left| e_n(x) \right| & = \left| f(x) - p_n(x) \right|                                                        \\
+                                                      & \le \left| \frac{f^{(n + 1)}(c)}{(n + 1)!} \prod\limits_{j = 0}^{n} (x - x_j) \right| \\
+                                                      & \le \left| \frac{(-1)^{n}f(c)}{n!} \prod\limits_{j = 0}^{n} (x - x_j) \right|         \\
+                                                      & \le \left| \frac{e^{-c}}{n!} \right|
+			\end{align*}
+			Therefore, as $c \in [0,1]$,
+			\begin{align*}
+				\left| e_n(x) \right| & \le \frac{1}{n!}
+			\end{align*}
+		\item
+			\begin{align*}
+				\left| e_n(x) \right|   & \le \frac{1}{n!} \\
+				\therefore \frac{1}{n!} & \le 10^{-3}      \\
+				\therefore n!           & \ge 10^3
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				n & \ge 7
+			\end{align*}
+			Therefore, we need at least 7 sample points if we require an approximation of $f$ with error less than $10^{-3}$.
+	\end{enumerate}
+\end{solution}
+
+\end{document}
