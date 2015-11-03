@@ -463,4 +463,44 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 	\end{align*}
 \end{solution}
 
+\recitation
+
+\begin{question}
+	Find Hermite's interpolating polynomial for the sample points $1$, $1$, $e$, for the function $f(x) = \ln(x)$.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		f[x_0,\dots,x_k] &=
+			\begin{cases}
+				\frac{f[x_1,\dots,x_k] - f[x_0,\dots,x_{k - 1}]}{x_k - x_0} & ;\quad x_k \neq x_0 \\
+				\frac{f^{(k)}(x_0)}{k!}                                     & ;\quad x_k = x_0    \\
+			\end{cases}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f[1] & = 0 \\
+		f[1] & = 0 \\
+		f[e] & = 1
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f[1,1] & = \frac{f'(1)}{1!}                   \\
+                       & = \left. \frac{1}{x} \right|_{x = 1} \\
+                       & = 1                                  \\
+		f[1,e] & = \frac{1 - 0}{e - 1}                \\
+                       & = \frac{1}{e - 1}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f[1,1,e] & = \frac{\frac{1}{e - 1} - 1}{e - 1} \\
+                         & = \frac{2 - e}{(e - 1)^2}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p_2(x) & = f[1] + f[e] (x - 1) + \frac{2 - e}{(e - 1)^2} (x - 1) (x - 1) \\
+                       & = 0 + 1 (x - 1) + \frac{2 - e}{(e - 1)^2} (x - 1)^2
+	\end{align*}
+\end{solution}
+
 \end{document}
