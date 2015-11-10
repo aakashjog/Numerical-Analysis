@@ -503,4 +503,84 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 	\end{align*}
 \end{solution}
 
+\section{Fixed Point Iterations and Root Finding}
+
+\recitation
+\begin{question}
+	Show that
+	\begin{align*}
+		e_n & = \alpha - x_n \\
+                    & \approx -\frac{f(x_n)}{f'(x_n)}
+	\end{align*}
+\end{question}
+
+\begin{solution}
+	By Lagrange's Mean Value Theorem, $\exists c \in (a,b)$, such that
+	\begin{align*}
+		f'(c) & = \frac{f(b) - f(a)}{b - a}
+	\end{align*}
+	Let
+	\begin{align*}
+		b & = x_n \\
+		a & = \alpha
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\frac{f(x_n) - f(\alpha)}{x_n - \alpha} & = f'(c_n)
+	\end{align*}
+	where $c_n \in (\alpha,x_n)$.\\
+	Therefore,
+	\begin{align*}
+		-e_n & = x_n - \alpha \\
+                     & = \frac{f(x_n)}{f'(c_n)}
+	\end{align*}
+	Therefore, as $\lim\limits_{n \to \infty} x_n = 2$, for $n \to \infty$,
+	\begin{align*}
+		c_n & = x_n
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		e_n & = -\frac{f(x_n)}{f'(x_n)}
+	\end{align*}
+\end{solution}
+
+\begin{question}
+	Let 
+	\begin{align*}
+		f(x) & = e^{-x} - \frac{1}{2}
+	\end{align*}
+	\begin{enumerate}
+		\item Show that $f$ has a root in $[0,1]$.
+		\item Show that Newton's method converges to the root $\alpha$ of $f$, and that $\alpha$ is unique.
+	\end{enumerate}<++>
+\end{question}<++>
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				f(0) & = e^0 - \frac{1}{2}           \\
+                                     & = \frac{1}{2}                 \\
+				f(1) & = \frac{1}{e} - \frac{1}{2}   \\
+                                     & < \frac{1}{2.7} - \frac{1}{2} \\
+                                     & < 0
+			\end{align*}
+			Therefore, by the intermediate value theorem, $\exists \alpha$ such that $f(\alpha) = 0$.
+			Hence, $f$ has a root in $[0,1]$.
+		\item
+			\begin{align*}
+				g(x) & = x - \frac{f(x)}{f'(x)}                  \\
+                                     & = x + \frac{e^{-x} - \frac{1}{2}}{e^{-x}} \\
+                                     & = x + 1 - \frac{1}{2} e^x
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				g'(x) & = 1 - \frac{1}{2} e^x
+			\end{align*}
+			Therefore, as the extrema of $g$ are in $[0,1]$, $g : [0,1] \to [0,1]$.\\
+			Similarly, $g'(x)$ is decreasing.\\
+			Hence, by the fixed point theorem, as $\lim\limits_{n \to \infty} x_n = \alpha$, $\alpha$ is unique.
+	\end{enumerate}
+\end{solution}
+
 \end{document}
