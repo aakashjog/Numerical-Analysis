@@ -1,0 +1,187 @@
+\documentclass[fleqn, a4paper, 11pt, oneside]{amsart}
+%\usepackage[top = 2cm, bottom = 1cm, left = 1cm, right = 1cm]{geometry}
+\usepackage{exsheets, tasks}
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units, space-before-unit]{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+\usetikzlibrary{calc, hobby, patterns, intersections, decorations.markings}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac} %inline fractions
+\usepackage{enumerate,enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage{circuitikz}[american voltages, american currents] %circuit diagrams
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\newcommand{\AxisRotator}[1][rotate=0]{
+	\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
+} %rotation symbols on axes
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}
+\renewcommand{\thesection}{(\arabic{section})}
+
+%section headings on left
+\makeatletter
+\def\specialsection{\@startsection{section}{1}%
+	\z@{\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\centering}}% DELETED
+	{\normalfont}}% NEW
+\def\section{\@startsection{section}{1}%
+	\z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\scshape\centering}}% DELETED
+	{\normalfont\scshape}}% NEW
+\makeatother
+
+%forces newline after subsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+	\z@{.5\linespacing\@plus.7\linespacing}{.1\linespacing}%
+	{\normalfont\itshape}}
+\makeatother
+
+\settasks{counter-format = tsk[1].}
+
+\SetupExSheets{solution/print = true}
+
+%opening
+\title{Numerical Analysis : Assignment 4}
+\author
+{
+	Aakash Jog\\
+	ID : 989323563
+}
+\date{\formatdate{10}{11}{2015}}
+
+\begin{document}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\begin{question}
+	Let $f : [0,1] \to \mathbb{R}$ be defined by $f(x) = e^{-x}$.
+	Consider $n + 1$ sample point $\{x_0,\dots,x_n\}$ in $[0,1]$, defined by
+	\begin{align*}
+		x_k & = k h \\
+		h   & = \frac{1}{n}
+	\end{align*}
+	where $k \in \{0,\dots,n\}$.\\
+	Consider the piecewise linear interpolation $l(x)$ based on this data.
+	\begin{enumerate}
+		\item Bound $\left| e(x) \right| = \left| f(x) - l(x) \right|$ for $x \in [0,1]$.
+		\item How many samples do we need in order to guarantee an interpolation error bounded by $10^{-8}$?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				\left| e(x) \right| & \le \frac{h^2}{8} \max\limits_{t \in [0,1]} \left| f''(x) \right| \\
+                                                    & \le \frac{1}{8 n^2} \left| \left( e^{-x} \right)'' \right|        \\
+                                                    & \le \frac{1}{8 n^2} \left| e^{-x} \right|                         \\
+                                                    & \le \frac{1}{8 n^2}
+			\end{align*}
+		\item
+			\begin{align*}
+				\left| e(x) \right| & \le \frac{1}{8 n^2}         \\
+				\therefore 10^{-8}  & \le \frac{1}{8 n^2}         \\
+				\therefore n^2      & \ge \frac{10^{8}}{8}        \\
+				\therefore n        & \ge \frac{10^4}{2 \sqrt{2}} \\
+				\therefore n        & \ge 3536
+			\end{align*}
+			Therefore, we need 3536 samples to guarantee an interpolation error bounded by $10^{-8}$.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let $f : [0,1] \to \mathbb{R}$ be defined by $f(x) = \cos(x)$.
+	Consider $n + 1$ sample point $\{x_0,\dots,x_n\}$ in $[0,1]$, defined by
+	\begin{align*}
+		x_k & = k h \\
+		h   & = \frac{1}{n}
+	\end{align*}
+	where $k \in \{0,\dots,n\}$, where $n$ is even.
+	Consider the piecewise quadratic interpolation $l(x)$ based on this data.
+	Namely, we approximate $f(x)$ at each $x \in [x_{2 k},x_{2 k + 2}]$ by the quadratic interpolating polynomial based on the samples $\{x_{2 k},x_{2 k + 1},x_{2 k + 2}\}$.
+	\begin{enumerate}
+		\item Bound $\left| e(x) \right| = \left| f(x) - l(x) \right|$ for $x \in [0,\pi]$.
+		\item How many samples do we need in order to guarantee an interpolation error bounded by $9 \times 10^{-5}$?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				\left| e(x) \right| & \le \frac{\sqrt{8}}{27} \frac{\pi^3}{4 n^3} \frac{1}{3!} \max\limits_{t \in [0,\pi]} \left| f'''(x) \right| \\
+                                                    & \le \frac{\sqrt{2} \pi^3}{486} \max\limits_{t \in [0,\pi]} \left| \left( \cos(x) \right)''' \right|         \\
+                                                    & \le \frac{\sqrt{2} \pi^3}{486}
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let $f$ be infinitely differentiable in $[a,b]$.
+	Assume that there exists $M > 0$ such that
+	\begin{align*}
+		\max\limits_{a \le x \le b} \left| f^{(k)}(x) \right| & < M^k
+	\end{align*}
+	for any $k = \mathbb{N}$.
+	Show that the error in the interpolating polynomial satisfies
+	\begin{align*}
+		\lim\limits_{n \to \infty} \left| e_n(x) \right| & = \lim\limits_{n \to \infty} \left| f(x) - p_n(x) \right| \\
+                                                                 & = 0
+	\end{align*}
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		\lim\limits_{n \to \infty} \left| e_n(x) \right|          & = \lim\limits_{n \to \infty} \left| f(x) - p_n(x) \right|                                                                     \\
+                                                                          & = \lim\limits_{n \to \infty} \left| \frac{f^{(n + 1)}(c)}{(n + 1)!} \right| \left| \prod\limits_{i = 0}^{n} (x - x_i) \right| \\
+                                                                          & \le \lim\limits_{n \to \infty} \frac{M^{n + 1}}{(n + 1)!} (b - a)^{n + 1}                                                     \\
+		\therefore \lim\limits_{n \to \infty} \left| e(x) \right| & = 0
+	\end{align*}
+	\qed
+\end{solution}
+
+\begin{question}
+	Let $f(x) = x^{\frac{99}{97}}$ in $[-h,h]$.
+	Bound the linear interpolation error based on the samples $\{-h,h\}$, and show that the error is of order $\mathrm{O}\left( h^{\frac{99}{97}} \right)$.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		\left| e(x) \right| & \le \left| \frac{f''(c)}{2!} \right| \left| (x + h) (x - h) \right|                                               \\
+                                    & \le \frac{1}{2} \left| \frac{99}{97} \cdot \frac{2}{97} \cdot c^{-\frac{95}{97}} \right| \left| x^2 - h^2 \right| \\
+                                    & \le \left| \frac{99}{(97)^2} c^{-\frac{95}{97}} \right| h^2                                                       \\
+                                    & \le \left| \frac{99}{(97)^2} c^{-\frac{95}{97}} \right| h^{\frac{99}{97}}
+	\end{align*}
+	Therefore, $e(x)$ is of order $\mathrm{O}\left( h^{\frac{99}{97}} \right)$.
+\end{solution}
+
+\end{document}
