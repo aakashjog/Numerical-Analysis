@@ -552,8 +552,8 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 	\begin{enumerate}
 		\item Show that $f$ has a root in $[0,1]$.
 		\item Show that Newton's method converges to the root $\alpha$ of $f$, and that $\alpha$ is unique.
-	\end{enumerate}<++>
-\end{question}<++>
+	\end{enumerate}
+\end{question}
 
 \begin{solution}
 	\begin{enumerate}[leftmargin=*]
@@ -580,6 +580,91 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 			Therefore, as the extrema of $g$ are in $[0,1]$, $g : [0,1] \to [0,1]$.\\
 			Similarly, $g'(x)$ is decreasing.\\
 			Hence, by the fixed point theorem, as $\lim\limits_{n \to \infty} x_n = \alpha$, $\alpha$ is unique.
+	\end{enumerate}
+\end{solution}
+
+\recitation
+\begin{theorem}
+	For the method $x_{n + 1} = g(x_n)$, if $\alpha = g(\alpha)$ and $\left| g'(\alpha) \right| < 1$, then $\exists$ a neighbourhood $(\alpha - \varepsilon , \alpha + \varepsilon) = \mathcal{N}$, of $\alpha$, such that for any $x_0 \in \mathcal{N}$,
+	\begin{align*}
+		\lim\limits_{n \to \infty} x_n & = \alpha
+	\end{align*}
+\end{theorem}
+
+\begin{definition}[Rate of convergence]
+	For a converging iterative method, $p$ is called the rate of convergence if $\exists c \neq 0$, such that
+	\begin{align*}
+		\lim\limits_{n \to \infty} \frac{|e_{n + 1}|}{|e_n|^p} & = c
+	\end{align*}
+	which is equivalent to
+	\begin{align*}
+		|e_{n + 1}| & = \left( c + \mathrm{o}(1) \right) |e_n|^p
+	\end{align*}
+	where $\mathrm{o}(1)$ is a sequence whose limit is $0$.
+\end{definition}
+
+\begin{theorem}
+	Let $p \in \mathbb{N}$.
+	If $g(\alpha) = \alpha$, and for $1 \le k < p$,
+	\begin{align*}
+		g^{(k)}(\alpha) & = 0
+	\end{align*}
+	and
+	\begin{align*}
+		g^{(p)}(\alpha) & \neq 0
+	\end{align*}
+	then ,the rate of convergence if $p$.
+\end{theorem}
+
+\begin{question}
+	Consider the following iteration for calculating $\alpha = r^{\frac{1}{3}}$, where $r > 0$.
+	\begin{align*}
+		g(x)      & = A x + B r x^{-2} + C r^2 x^{-5} \\
+		x_{n + 1} & = g(x_n)
+	\end{align*}
+	where $A,B,C \in \mathbb{R}$.
+	\begin{enumerate}
+		\item Find $A$, $B$, $C$, such that the method converges to $r^{\frac{1}{3}}$ with maximum rate of convergence.
+		\item What is the rate of convergence?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			For the method to converge to $r^{\frac{1}{3}}$, $r^{\frac{1}{3}}$ must be a fixed point of $g$.\\
+			Therefore,
+			\begin{align*}
+				g\left( r^{\frac{1}{3}} \right) & = A r^{\frac{1}{3}} + B r r^{-\frac{2}{3}} + C r^2 r^{-\frac{5}{3}} \\
+				\therefore r^{\frac{1}{3}}      & = A r^{\frac{1}{3}} + B r^{\frac{1}{3}} + C r^{\frac{1}{3}}
+			\end{align*}
+			For the rate of convergence to be maximum,
+			\begin{align*}
+				g'\left( r^{\frac{1}{3}} \right) & = 0 \\
+				\therefore A - 2 B - 5 C         & = 0
+			\end{align*}
+			Also, for the rate of convergence to maximum,
+			\begin{align*}
+				g''\left( r^{\frac{1}{3}} \right) & = 0 \\
+				\therefore 6 B + 30 C             & = 0
+			\end{align*}
+			Therefore, solving,
+			\begin{align*}
+				A & = \frac{5}{9} \\
+				B & = \frac{5}{9} \\
+				C & = -\frac{1}{9}
+			\end{align*}
+			Therefore, the rate of convergence is greater than $2$.
+		\item
+			\begin{align*}
+				g'''(x) & = -24 B r x^{-5} - 210 C r^2 x^{-8}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				g'''\left( r^{\frac{1}{3}} \right) & = \frac{40}{3} e^{-\frac{2}{3}} \\
+                                                                   & \neq 0
+			\end{align*}
+			Therefore the rate of convergence is $3$.
 	\end{enumerate}
 \end{solution}
 
