@@ -1,0 +1,350 @@
+\documentclass[fleqn, a4paper, 11pt, oneside]{amsart}
+%\usepackage[top = 2cm, bottom = 1cm, left = 1cm, right = 1cm]{geometry}
+\usepackage{exsheets, tasks}
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units, space-before-unit]{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+\usetikzlibrary{calc, hobby, patterns, intersections, decorations.markings}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac} %inline fractions
+\usepackage{enumerate,enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage{circuitikz}[american voltages, american currents] %circuit diagrams
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\newcommand{\AxisRotator}[1][rotate=0]{
+	\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
+} %rotation symbols on axes
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}
+\renewcommand{\thesection}{(\arabic{section})}
+
+%section headings on left
+\makeatletter
+\def\specialsection{\@startsection{section}{1}%
+	\z@{\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\centering}}% DELETED
+	{\normalfont}}% NEW
+\def\section{\@startsection{section}{1}%
+	\z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\scshape\centering}}% DELETED
+	{\normalfont\scshape}}% NEW
+\makeatother
+
+%forces newline after subsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+	\z@{.5\linespacing\@plus.7\linespacing}{.1\linespacing}%
+	{\normalfont\itshape}}
+\makeatother
+
+\settasks{counter-format = tsk[1].}
+
+\SetupExSheets{solution/print = true}
+
+%opening
+\title{Numerical Analysis : Assignment 4}
+\author
+{
+	Aakash Jog\\
+	ID : 989323563
+}
+\date{\formatdate{10}{11}{2015}}
+
+\begin{document}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\begin{question}
+	Consider the stopping criterion
+	\begin{align*}
+		\left| \frac{f(x_n)}{f'(x_n)} \right| & < \varepsilon
+	\end{align*}
+	Show that in Newton's method this criterion is equivalent to
+	\begin{align*}
+		|x_{n + 1} - x_n| & < \varepsilon
+	\end{align*}
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		\left| \frac{f(x_n)}{f'(x_n)} \right| & < \varepsilon
+	\end{align*}
+	By Newton's method,
+	\begin{align*}
+		x_{n + 1}                    & = x_n - \frac{f(x_n)}{f'(x_n)}          \\
+		\therefore x_{n + 1} - x_n   & = -\frac{f(x_n)}{f'(x_n)}               \\
+		\therefore |x_{n + 1} - x_n| & = \left| \frac{f(x_n)}{f'(x_n)} \right| \\
+		\therefore |x_{n + 1} - x_n| & \le \varepsilon
+	\end{align*}
+	\qed
+\end{solution}
+
+\begin{question}
+	Let $x_{n + 1} = g(x_n)$ be a fixed point method, and assume that $x_n \to a$ as $n \to \infty$, where $g(a) = a$.
+	\begin{enumerate}
+		\item
+			Let $e_n = a - x_n$.
+			Show
+			\begin{align*}
+				x_{n + 1} - x_n & = e_n - e_{n + 1}
+			\end{align*}
+		\item
+			Show that
+			\begin{align*}
+				e_{n + 1} & = g'(c_n) e_n
+			\end{align*}
+			for some $c_n$ between $a$ and $x_n$.
+			Hint: Use the mean value theorem.
+		\item
+			Show that
+			\begin{align*}
+				e_n & \approx \frac{x_{n + 1} - x_n}{1 - g'(x_n)}
+			\end{align*}
+			and formulate a corresponding stopping criterion.
+		\item
+			Formulate a stopping criterion based on the above.
+		\item
+			When is the stopping criterion
+			\begin{align*}
+				|x_{n + 1} - x_n| & < \varepsilon
+			\end{align*}
+			a good approximation to the theoretical stopping criterion $|e_n| < \varepsilon$?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				x_{n + 1} - x_n & = (a - e_{n + 1}) - (a - e_n) \\
+                                                & = e_n - e_{n + 1}
+			\end{align*}
+			\qed
+		\item
+			By Lagrange's Mean Value theorem, $\exists c_n \in (a,x_n)$, such that
+			\begin{align*}
+				g'(c_n)              & = \frac{g(x_n) - g(a)}{x_n - a} \\
+                                                     & = \frac{x_{n + 1} - a}{x_n - a} \\
+                                                     & = \frac{e_{n + 1}}{e_n}         \\
+				\therefore e_{n + 1} & = g'(c_n) e_n
+			\end{align*}
+			\qed
+		\item
+			\begin{align*}
+				g'(c_n)                & = \frac{g(a) - g(x_n)}{a - x_n}                    \\
+				\therefore 1 - g'(c_n) & = 1 - \left( \frac{g(a) - g(x_n)}{a - x_n} \right) \\
+				\therefore 1 - g'(c_n) & = 1 - \left( \frac{g(a) - g(x_n)}{e_n} \right)     \\
+				\therefore e_n(x)      & = \frac{x_{n + 1} - x_n}{1 - g'(x_n)}              \\
+			\end{align*}
+		\item
+			The corresponding stopping criterion is
+			\begin{align*}
+				|e_n| & < \varepsilon
+			\end{align*}
+		\item
+			If $g'(a) = 0$ or $g'(a) = 2$,
+			\begin{align*}
+				\left| e_n(x) \right| & = \left| \frac{x_{n + 1} - x_n}{1} \right|
+			\end{align*}
+			Therefore, this is a good approximation to the theoretical stopping criterion.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let
+	\begin{align*}
+		f(x) & = e^{-x} - \frac{1}{2}
+	\end{align*}
+	\begin{enumerate}
+		\item
+			Show that $f$ has a root in $[0,1]$.
+		\item
+			Show that Newton's method converges to the root $a$ of $f$.
+		\item
+			\begin{enumerate}
+				\item How many points are required in order to guarantee an absolute error bounded by $10^{-2}$?
+				\item How many points are required in order to guarantee an absolute error bounded by $10^{-7}$?
+			\end{enumerate}
+		\item
+			How many iterations are performed if the above stopping criterion, to guarantee an error bounded by $10^{-2}$ and $10^{-7}$?
+		\item
+			Cheat and calculate $\ln(2)$, i.e. the root of $f$.
+			What is a better estimate for the required number of iterations, the worst case bound of section 3 or the error estimate of section 4?
+			Explain why one of them is better than the other.
+			Base you explanation on the notion of the rate of convergence.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				f(0) & = 1 - \frac{1}{2} \\
+                                     & > 0
+			\end{align*}
+			\begin{align*}
+				f(1) & = \frac{1}{e} - \frac{1}{2} \\
+                                     & < 0
+			\end{align*}
+			Therefore, by the intermediate value theorem, $\exists c \in [0,1]$ such that $f(c) = 0$.
+			Hence $f$ has a root in $[0,1]$.
+			\qed
+		\item
+			\begin{align*}
+				g(x) & = x - \frac{f(x)}{f'(x)} \\
+                                     & = x + 1 - \frac{e^x}{2}
+			\end{align*}
+			As $g'(x) = 1 - \frac{e^x}{2}$, $g : [0,1] \to [0,1]$.
+			Therefore, as $n \to \infty$, $x_n \to a$.
+			\qed
+		\item
+			\begin{enumerate}[leftmargin=*]
+				\item
+					By the fixed point theorem,
+					\begin{align*}
+						|e_n| & \le \left( \frac{1}{2} \right)^2 |e_0| \\
+                                                      & \le 2^{-n}                             \\
+					\end{align*}
+					Therefore,
+					\begin{align*}
+						10^{-2}         & \ge 2^{-n}        \\
+						\therefore 10^2 & \le 2^n           \\
+						\therefore n    & \ge 2 \log_{2} 10 \\
+						\therefore n    & \ge 7
+					\end{align*}
+					Therefore, $7$ points are required in order to guarantee an error bounded by $10^{-2}$.
+				\item
+					\begin{align*}
+						10^{-7}         & \ge 2^{-n}\\
+						\therefore 10^7 & \le 2^n\\
+						\therefore n    & \ge 7 \log_{2} 10\\
+						\therefore n    & \ge 24
+					\end{align*}
+					Therefore, $24$ points are required in order to guarantee an error bounded by $10^{-7}$.
+			\end{enumerate}
+		\item
+			\begin{align*}
+				x_0 & = 0.5       \\
+				x_1 & = 0.6756393 \\
+				x_2 & = 0.6929948 \\
+				x_3 & = 0.6931471 \\
+				x_4 & = 0.6931471 \\
+			\end{align*}
+			Therefore, to guarantee an error bounded by $10^{-2}$ and $10^{-7}$, $2$ and $3$ iterations, respectively, are required.
+		\item
+			\begin{align*}
+				\ln(2) & = 0.6931471
+			\end{align*}
+			Therefore, the error estimate of section 4 is better, as for it, $n = 3$ and $\varepsilon = 10^{-7}$.
+			In Newton's method, $g'(a) = 0$.
+			Hence, the convergence is expected to be faster.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	We want to approximate a root $a$ of $f(x) = x - e^{-x^2}$, in $[0,1]$.
+	\begin{enumerate}
+		\item
+			Show that there exists such a root.
+		\item
+			We define the iterative method
+			\begin{align*}
+				x_{n + 1} & = g(x_n) \\
+                                          & = e^{-{x_n}^2}
+			\end{align*}
+			Show that any root of $f$ is a fixed point of $g$ and vice-versa.
+		\item
+			Show that the root of $f$ is unique in $[0,1]$, and that the iterative method converges to it.
+		\item
+			Let $x_0 \in [0,1]$ be an initial guess.
+			How many iterations are required in order to guarantee an error bounded by 0.05?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				f(0) & = 0 - 1 \\
+                                     & < 0
+			\end{align*}
+			\begin{align*}
+				f(1) & = 1 - \frac{1}{e} \\
+                                     & > 0
+			\end{align*}
+			Therefore, by the intermediate value theorem, there exists such a root $a$ in $[0,1]$.
+		\item
+			\begin{align*}
+				x_{n + 1} & = g(x_n) \\
+                                          & = e^{-{x_n}^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				g(x)              & = x        \\
+				\iff x            & = e^{-x^2} \\
+				\iff x - e^{-x^2} & = 0        \\
+				\iff f(x)         & = 0
+			\end{align*}
+		\item
+			\begin{align*}
+				g(x)             & = e^{-x^2} \\
+				\therefore g'(x) & = -2 x e^{-x^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				g(0) & = 1           \\
+                                     & \le 1         \\
+				g(1) & = \frac{1}{e} \\
+                                     & \le 1
+			\end{align*}
+			\begin{align*}
+				\left| g'(x) \right| & = \left| -2 x e^{-x^2} \right| \\
+                                                     & = 2 x e^{-x^2}                 \\
+                                                     & \le \sqrt{\frac{2}{e}}         \\
+                                                     & < 1
+			\end{align*}
+			Therefore, by the fixed point theorem, $x_n \to a$, as $n \to \infty$, and $a$ is unique.
+		\item
+			\begin{align*}
+				|e_n| & \le k^n |e_0|                                 \\
+                                      & \le \left( \sqrt{\frac{2}{e}} \right)^n |e_0| \\
+                                      & \le \left( \sqrt{\frac{2}{e}} \right)^n
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\left( \sqrt{\frac{2}{e}} \right)^n & < 5 \times 10^{-2}
+				\therefore n                        & \ge 20
+			\end{align*}
+			Therefore, at least 20 iterations are required to guarantee an error bounded by 0.05.
+	\end{enumerate}
+\end{solution}
+
+\end{document}
