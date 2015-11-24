@@ -1,0 +1,412 @@
+\documentclass[fleqn, a4paper, 11pt, oneside]{amsart}
+%\usepackage[top = 2cm, bottom = 1cm, left = 1cm, right = 1cm]{geometry}
+\usepackage{exsheets, tasks}
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units, space-before-unit]{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+\usetikzlibrary{calc, hobby, patterns, intersections, decorations.markings}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac} %inline fractions
+\usepackage{enumerate,enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage{circuitikz}[american voltages, american currents] %circuit diagrams
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\newcommand{\AxisRotator}[1][rotate=0]{
+	\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
+} %rotation symbols on axes
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}
+\renewcommand{\thesection}{(\arabic{section})}
+
+%section headings on left
+\makeatletter
+\def\specialsection{\@startsection{section}{1}%
+	\z@{\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\centering}}% DELETED
+	{\normalfont}}% NEW
+\def\section{\@startsection{section}{1}%
+	\z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\scshape\centering}}% DELETED
+	{\normalfont\scshape}}% NEW
+\makeatother
+
+%forces newline after subsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+	\z@{.5\linespacing\@plus.7\linespacing}{.1\linespacing}%
+	{\normalfont\itshape}}
+\makeatother
+
+\settasks{counter-format = tsk[1].}
+
+\SetupExSheets{solution/print = true}
+
+%opening
+\title{Numerical Analysis : Assignment 6}
+\author
+{
+	Aakash Jog\\
+	ID : 989323563
+}
+\date{\formatdate{24}{11}{2015}}
+
+\begin{document}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\begin{theorem}[Fixed point theorem 2]
+	Let $g(x)$ be a continuously differentiable function.
+	Let $a$ be a fixed point of $g$.
+	Consider the fixed point iteration $x_{n + 1} = g(x_n)$.\\
+	If $\left| g(a) \right| < 1$, then there exists a neighbourhood $(a - \delta , a + \delta)$, where $\delta > 0$, such that for any initial guess $x_0 \in (a - \delta , a + \delta)$ the method converges to $a$.
+	\label{thm:Fixed_point_theorem_2}
+\end{theorem}
+
+\begin{theorem}[Rate of convergence]
+	Consider the method $x_{n + 1} = g(x_n)$, with $g$ being $k$ times continuously differentiable.
+	If $g(a) = 0$ and for any $1 \le k < p$,
+	\begin{align*}
+		g^{(k)}(a) & = 0
+	\end{align*}
+	and $g^{(p)}(a) \neq 0$, then the method converges to $a$ in some neighbourhood of $a$, and the rate of convergence is $p$.
+	\label{thm:Rate_of_convergence}
+\end{theorem}
+
+\begin{question}
+	Prove Theorem \ref{thm:Rate_of_convergence} as follows.
+	\begin{enumerate}
+		\item
+			Show that for any $n \in \mathbb{N}$, there exists a point $c_n$ between $a$ and $x_n$, such that
+			\begin{align*}
+				g(x_n) & = g(a) + \frac{g^{(p)}(c_n)}{p!} (x_n - a)^p
+			\end{align*}
+		\item
+			Prove
+			\begin{align*}
+				|e_{n + 1}| & = \left| \frac{g^{(p)}(c_n)}{p!} \right| |e_n|^p
+			\end{align*}
+		\item
+			Finish proving the theorem.
+			Hint: Show that $c_n \xrightarrow{n \to \infty} a$.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			The Taylor expansion of $g(x_n)$ around $a$ is
+			\begin{align*}
+				g(x_n) & = g(a) + g'(a) (x_n - a) + \dots + \frac{g^{(k)}(a)}{k!} (x_n - a)^k + \frac{g^{(p)}(c_n)}{p!} (x_n - a)^p \\
+                                       & = g(a) + \frac{g^{(p)}}{p!} (x_n - p)^p
+			\end{align*}
+		\item
+			\begin{align*}
+				x_{n + 1}                & = a + \frac{g^{(p)}(c_n)}{p!} (x_n - a)^p \\
+				\therefore a - x_{n + 1} & = -\frac{g^{(p)}(c_n)}{p!} (x_n - a)^p
+                                                         & = -\frac{g^{(p)}(c_n)}{p!} {e_n}^p        \\
+				\therefore |e_{n + 1}|   & = \left| \frac{g^{(p)}(c_n)}{p!} \right| |e_n|^p
+			\end{align*}
+		\item
+			\begin{align*}
+				\lim\limits_{n \to \infty} x_n & = a
+			\end{align*}
+			As $c_n$ is between $a$ and $x_n$,
+			\begin{align*}
+				\lim\limits_{n \to \infty} c_n & = x_n \\
+                                                               & = a
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\lim\limits_{n \to \infty} c_n & = a
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	In order to find the root of
+	\begin{align*}
+		f(x) & = x^2 - 2
+	\end{align*}
+	we use the following iterative method.
+	\begin{align*}
+		x_{n + 1} & = x_n + A \frac{{x_n}^2 - 2}{x_n} + B \frac{{x_n}^2 - 2}{{x_n}^3}
+	\end{align*}
+	\begin{enumerate}
+		\item Find $A$ and $B$ such that the method has a maximal rate of convergence.
+		\item Calculate the rate of convergence.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			Let the root of the equation be $f(x) = 0$ be $r$.
+			\begin{align*}
+				x_{n + 1} & = x_n + A \frac{{x_n}^n - 2}{x_n} + B \frac{{x_n}^2 - 2}{{x_n}^3} \\
+                                          & = g(x_n)
+			\end{align*}
+			Therefore, using the fixed point theorem,
+			\begin{align*}
+				g(r)         & = r \\
+				\therefore 0 & = 0
+			\end{align*}
+			Let
+			\begin{align*}
+				g'(x)              & = 0 \\
+				\therefore 2 A + B & = -1
+			\end{align*}
+			Let
+			\begin{align*}
+				g''(x)       & = 0 \\
+				\therefore A & = -\frac{7}{2} B
+			\end{align*}
+			Therefore, solving,
+			\begin{align*}
+				A & = -\frac{7}{12} \\
+				B & = \frac{1}{6}
+			\end{align*}
+		\item
+			\begin{align*}
+				g'''(x) & = -\frac{7}{r^4} + + \frac{r^4 - 20}{r^6} \\
+                                        & \neq 0
+			\end{align*}
+			Therefore, as $g'(x)$ and $g''(x)$ are zero, but $g'''(x) \neq 0$, the rate of convergence is $3$.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Assume that our machine only performs additions and multiplications, and not division.
+	Let $a > 0$.
+	We approximate $\frac{1}{a}$ using two iterative methods.
+	\begin{align*}
+		x_{n + 1} & = g(x_n) \\
+		g(x)      & = 2 x - a x^2
+	\end{align*}
+	and
+	\begin{align*}
+		x_{n + 1} & = h(x_n) \\
+		h(x)      & = 3 x - 3 a x^2 + a^2 x^3
+	\end{align*}
+	\begin{enumerate}
+		\item
+			Show that $\frac{1}{a}$ is a fixed point of both the methods.
+		\item
+			Show that there is a neighbourhood $\mathcal{N}_1$ of $\frac{1}{a}$, such that for any $x_0 \in \mathcal{N}_1$, $x_{n + 1} = g(x_n) \xrightarrow{n \to \infty} \frac{1}{a}$.
+			Also, show that there is a neighbourhood $\mathcal{N}_2$ of $\frac{1}{a}$ corresponding to $h$.
+		\item
+			For an initial guess $x_0 \in \mathcal{N}_1 \cap \mathcal{N}_2$, which iterative method is faster?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				x_{n + 1} & = g(x_n) \\
+				g(x)      & = 2 x - a x^2
+			\end{align*}
+			\begin{align*}
+				x_{n + 1} & = h(x_n) \\
+				h(x)      & = 3 x - 3 a x^2 + a^2 x^3
+			\end{align*}
+			For $\frac{1}{a}$ to be a fixed point of both methods,
+			\begin{align*}
+				g\left( \frac{1}{a} \right) & = \frac{1}{a} \\
+				h\left( \frac{1}{a} \right) & = \frac{1}{a}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				g\left( \frac{1}{a} \right) & = 2 \frac{1}{a} - a \frac{1}{a^2} \\
+                                                            & = \frac{2}{a} - \frac{1}{a}       \\
+                                                            & = \frac{1}{a}
+			\end{align*}
+			\begin{align*}
+				h\left( \frac{1}{a} \right) & = 3 \frac{1}{a} - 3 a \frac{1}{a^2} + a^2 \frac{1}{a^3} \\
+                                                            & = \frac{1}{a}
+			\end{align*}
+			Therefore, $\frac{1}{a}$ is a fixed point of both methods.
+		\item
+			$g(x)$ and $h(x)$ are continuously differentiable function.\\
+			$\frac{1}{a}$ is a fixed point of both methods.\\
+			\begin{align*}
+				g'\left( \frac{1}{a} \right) & = 2 - 2 a \frac{1}{a} \\
+                                                             & = 0
+			\end{align*}
+			\begin{align*}
+				h'\left( \frac{1}{a} \right) & = 3 - 6 a \frac{1}{a} + 3 a^2 \frac{1}{a^2} \\
+                                                             & = 0
+			\end{align*}
+			Therefore, by the \nameref{thm:Fixed_point_theorem_2}, there exists such a neighbourhood $\mathcal{N}_1$ of $\frac{1}{a}$ corresponding to $g(x)$, and a neighbourhood $\mathcal{N}_2$ of $\frac{1}{a}$ corresponding to $h(x)$.
+			\qed
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let
+	\begin{align*}
+		f(x) & = x^2
+	\end{align*}
+	\begin{enumerate}
+		\item
+			Construct Newton's method for finding the root of $f$.
+		\item
+			What is the rate of convergence of the method?
+			You can use the known root.
+		\item
+			Does this contradict the theorem that states the rate of convergence of Newton's method is 2?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				x_{n + 1} & = x_n - \frac{f(x_n)}{f'(x_n)} \\
+                                          & = x_n - \frac{{x_n}^2}{2 x_n}  \\
+                                          & = \frac{x_n}{2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				x_{n + 1} & = \frac{x_n}{2} \\
+				g(x_n)    & = x_{n + 1}
+			\end{align*}
+		\item
+			\begin{align*}
+				\lim\limits_{n \to \infty} \frac{|e_{n + 1}|}{|e_n|^p} & = \lim\limits_{n \to \infty} \frac{|a - x_{n + 1}|}{|a - x_n|^p} \\
+                                                                                       & = \frac{|x_{n + 1}|}{|x_n|^p}
+			\end{align*}
+			If $p = 1$,
+			\begin{align*}
+				\lim\limits_{n \to \infty} \frac{|e_{n + 1}|}{|e_n|} & = \frac{1}{2} \\
+                                                                                     & \neq 0
+			\end{align*}
+			Therefore, the rate of convergence is $p = 1$.
+		\item
+			This does not contradict the theorem, as for the theorem, $f'(c) \neq 0$, but in this case, $f'(0) = 0$.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Recall the construction of Newton's method.
+	In the construction, at each iteration we approximate $f$ around $x_n$ by a linear polynomial.
+	Then, the approximation of the root at step $n + 1$ is the root of the approximating linear polynomial.\\
+	Construct a similar method, that uses an approximation $f$ around $x_n$ by a quadratic polynomial, instead of a linear polynomial.
+	The method should use the valued $f(x_n)$, $f'(x_n)$, $f''(x_n)$ at each iteration $n$, to construct $x_{n + 1}$.
+\end{question}
+
+\begin{solution}
+	Let the root of the equation be $r$.\\
+	Therefore,
+	\begin{align*}
+		f(r) & = 0
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		0                          & = f(x_n) + f'(x_n) (x_{n + 1} - x_n) + \frac{f''(x_n)}{2} (x_{n + 1} - x_n)^2                        \\
+		\therefore x_{n + 1} - x_n & = -\left( \frac{f'(x_n) + \sqrt{\left( f'(x_n) \right)^2 - 2 f(x_n) f''(x_n)}}{f''(x_n)} \right)     \\
+		\therefore x_{n + 1}       & = x_n -\left( \frac{f'(x_n) + \sqrt{\left( f'(x_n) \right)^2 - 2 f(x_n) f''(x_n)}}{f''(x_n)} \right) \\
+	\end{align*}
+	where $f''(x_n) \neq 0$.\\
+\end{solution}
+
+\begin{question}
+	We want to find a root $a$ of $f$, where $f(a) = f'(a) = a$, and $f''(a) \neq 0$.\\
+	Consider Newton's method
+	\begin{align*}
+		g(x)      & = x - \frac{f(x)}{f'(x)} \\
+		x_{n + 1} & = g(x_n)
+	\end{align*}
+	\begin{enumerate}
+		\item
+			Show that $g'(a) = \frac{1}{2}$.
+		\item
+			Prove that there is an interval $\mathcal{N}$ containing $a$ such that for any $x_0 \in \mathcal{N}$, the method converges to $a$.
+		\item
+			What is the rate of convergence of this method?
+		\item
+			Define the modified Newton's method
+			\begin{align*}
+				h(x)      & = x - 2 \frac{f(x)}{f'(x)} \\
+				x_{n + 1} & = h(x_n)
+			\end{align*}
+			Show that the rate of convergence of this method is at least 2.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item 
+			\begin{align*}
+				g(x)      & = x - \frac{f(x)}{f'(x)} \\
+				x_{n + 1} & = g(x_n)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				g'(x) & = 1 - \frac{f'(x)}{f'(x)} + \frac{f(x) f''(x)}{\left( f'(x) \right)^2} \\
+                                      & = \frac{f(x) f''(x)}{\left( f'(x) \right)^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				g'(a) & = \frac{f(a) f''(a)}{\left( f'(a) \right)^2} \\
+                                      & = \frac{a f''(a)}{a^2}                       \\
+                                      & = \frac{f''(a)}{a}                           \\
+                                      & = \frac{1}{2}
+			\end{align*}
+			\qed
+		\item
+			\begin{align*}
+				\left| g'(a) \right| & = \frac{1}{2} \\
+                                                     & < 1
+			\end{align*}
+			Therefore, and as $g(x)$ is continuously differentiable, by \nameref{thm:Fixed_point_theorem_2}, there exists such a neighbourhood $\mathcal{N}$ around $a$.
+		\item
+			\begin{align*}
+				\lim\limits_{n \to \infty} \frac{|e_{n + 1}|}{|e_n|} & \neq 0
+			\end{align*}
+			Therefore, the rate of convergence is $1$.
+		\item
+			\begin{align*}
+				h(x)      & = x - 2 \frac{f(x)}{f'(x)} \\
+				x_{n + 1} & = h(x_n)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				h'(x) & = 1 - 2 \left( \frac{f'(x)}{f'(x)} - \frac{f(x) f''(x)}{\left( f'(x) \right)^2} \right) \\
+                                      & = -1 + 2 \frac{f(x) f''(x)}{\left( f'(x) \right)^2}                                     \\
+                                      & = -1 + \frac{f''(x)}{a}
+			\end{align*}
+			Therefore, as $h'(x) \neq 0$, the rate of convergence of cannot be $1$.
+			Hence, it must be at least $2$.
+			\qed
+	\end{enumerate}
+\end{solution}
+
+\end{document}
