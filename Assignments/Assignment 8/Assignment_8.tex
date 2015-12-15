@@ -1,0 +1,453 @@
+\documentclass[fleqn, a4paper, 11pt, oneside]{amsart}
+%\usepackage[top = 2cm, bottom = 1cm, left = 1cm, right = 1cm]{geometry}
+\usepackage{exsheets, tasks}
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units, space-before-unit]{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+\usetikzlibrary{calc, hobby, patterns, intersections, decorations.markings}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac} %inline fractions
+\usepackage{enumerate,enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage{circuitikz}[american voltages, american currents] %circuit diagrams
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\newcommand{\AxisRotator}[1][rotate=0]{
+	\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
+} %rotation symbols on axes
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}
+\renewcommand{\thesection}{(\arabic{section})}
+
+\DeclareMathOperator{\cond}{cond}
+
+%section headings on left
+\makeatletter
+\def\specialsection{\@startsection{section}{1}%
+	\z@{\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\centering}}% DELETED
+	{\normalfont}}% NEW
+\def\section{\@startsection{section}{1}%
+	\z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\scshape\centering}}% DELETED
+	{\normalfont\scshape}}% NEW
+\makeatother
+
+%forces newline after subsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+	\z@{.5\linespacing\@plus.7\linespacing}{.1\linespacing}%
+	{\normalfont\itshape}}
+\makeatother
+
+\settasks{counter-format = tsk[1].}
+
+\SetupExSheets{solution/print = true}
+
+%opening
+\title{Numerical Analysis : Assignment 8}
+\author
+{
+	Aakash Jog\\
+	ID : 989323563
+}
+\date{\formatdate{15}{12}{2015}}
+
+\begin{document}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\begin{question}
+	Let
+	\begin{align*}
+		A &=
+			\begin{pmatrix}
+				1 & 2 \\
+				3 & 4 \\
+			\end{pmatrix}\\
+		B &=
+			\begin{pmatrix}
+				3 & 1 & 0 \\
+				1 & 3 & 1 \\
+				0 & 1 & 3 \\
+			\end{pmatrix}
+	\end{align*}
+	Calculate the condition numbers of $A$ and $B$ with respect to the $1$, $2$, and $\infty$ norms,
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		A^{-1} &=
+			\begin{pmatrix}
+				-2  & 1    \\
+				1.5 & -0.5 \\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\|A\|_1        & = \max\left\{ (1 + 3) , (2 + 4) \right\}     \\
+                               & = 6                                          \\
+		{\|A\|^{-1}}_1 & = \max\left\{ (2 + 1.5) , (1 + 0.5) \right\} \\
+                               & = 3.5
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\cond(A)_1 & = \|A\|_1 \left\| A^{-1} \right\|_1 \\
+                           & = 21
+	\end{align*}
+	~\\
+	\begin{align*}
+		A^{\mathsf{T}} &= 
+			\begin{pmatrix}
+				1 & 3 \\
+				2 & 4 \\
+			\end{pmatrix}\\
+		\therefore A^{\mathsf{T}} A &=
+			\begin{pmatrix}
+				10 & 14 \\
+				14 & 20 \\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\rho(A)            & = \frac{3345}{112}        \\
+		\therefore \|A\|_2 & = \sqrt{\frac{3345}{112}} \\
+                                   & = 5.4650
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		{A^{-1}}^{\mathsf{T}} &= 
+			\begin{pmatrix}
+				-2 & 1.5  \\
+				1  & -0.5 \\
+			\end{pmatrix}\\
+		\therefore {A^{-1}}^{\mathsf{T}} A^{-1} &=
+			\begin{pmatrix}
+				6.25  & -2.75 \\
+				-2.75 & 1.25  \\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\rho\left( A^{-1} \right) & = \frac{3345}{448}        \\
+		\therefore \|A\|_2        & = \sqrt{\frac{3345}{448}} \\
+                                          & = 2.7325
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\cond(A)_2 & = \|A\|_2 \left\| A^{-1} \right\|_2 \\
+                           & = 14.9331125
+	\end{align*}
+	~\\
+	\begin{align*}
+		\|A\|_{\infty}        & = \max\left\{ (1 + 2) , (3 + 4) \right\}     \\
+                                      & = 7                                          \\
+		{\|A\|^{-1}}_{\infty} & = \max\left\{ (2 + 1) , (1.5 + 0.5) \right\} \\
+                                      & = 3
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\cond(A)_{\infty} & = \|A\|_{\infty} \left\| A^{-1} \right\|_{\infty} \\
+                                  & = 21
+	\end{align*}
+	~\\
+	\begin{align*}
+		B^{-1} &=
+			\begin{pmatrix}
+				\frac{8}{21}  & -\frac{3}{21} & \frac{1}{21}  \\
+				-\frac{3}{21} & \frac{9}{21}  & -\frac{3}{21} \\
+				\frac{1}{21}  & -\frac{3}{21} & \frac{8}{21}  \\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\|B\|_1                   & = 5 \\
+		\left\| B^{-1} \right\|_1 & = \frac{5}{7}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\cond(B)_1 & = \frac{25}{7}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\|B\|_2                   & = 3 + \sqrt{2} \\
+		\left\| B^{-1} \right\|_2 & = \frac{3 + \sqrt{17}}{14}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\cond(B)_1 & = \frac{\left( 3 + \sqrt{2} \right) \left( 3 + \sqrt{17} \right)}{14}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\|B\|_{\infty}                   & = 5 \\
+		\left\| B^{-1} \right\|_{\infty} & = \frac{5}{7}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\cond(B)_{\infty} & = \frac{25}{7}
+	\end{align*}
+\end{solution}
+
+\begin{question}
+	Let
+	\begin{align*}
+		A &=
+			\begin{pmatrix}
+				100 & 99 \\
+				99  & 98 \\
+			\end{pmatrix}\\
+		b &=
+			\begin{pmatrix}
+				1.005 \\
+				0.995 \\
+			\end{pmatrix}\\
+		e_b &=
+			\begin{pmatrix}
+				0.05  \\
+				-0.05 \\
+			\end{pmatrix}
+	\end{align*}
+	Let $x$ be the solution to the system
+	\begin{align*}
+		A x & = b
+	\end{align*}
+	Assume that the right hand side of the system is noisy, and we actually solve the system
+	\begin{align*}
+		A \tilde{x} & = \tilde{b}
+	\end{align*}
+	where
+	\begin{align*}
+		\tilde{b} & = b - e_b
+	\end{align*}
+	Note that this is not the question from class.
+	In class we assumed that the RHS is accurate, but the solution to the system is calculated inaccurately by a numerical method.
+	In this exercise we assume that we know the RHS up to an error, and we calculate the accurate solution of the system with a noisy RHS.
+	\begin{enumerate}
+		\item
+			Calculate the condition number of $A$ with respect to the $\infty$ norm.
+		\item
+			Calculate the relative error in the RHS, in the $\infty$ norm.
+		\item
+			Without solving the system, find a bound on the relative error in the solution $x$, in the $\infty$ norm.
+		\item
+			Calculate $x$ and $\tilde{x}$, and calculate the relative error, in the $\infty$, in the solution $x$.
+			How does this error relate to the bound from 3?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				A &=
+					\begin{pmatrix}
+						100 & 99 \\
+						99  & 98 \\
+					\end{pmatrix}\\
+				\therefore A^{-1} &=
+					\begin{pmatrix}
+						-98 & 99   \\
+						99  & -100 \\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\|A\|_{\infty}                   & = \max\left\{ (100 + 99) , (99 + 98) \right\} \\
+                                                                 & = 199                                         \\
+				\left\| A^{-1} \right\|_{\infty} & = \max\left\{ (98 + 99) , (99 + 100) \right\} \\
+                                                                 & = 199
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\cond(A) & = 199^2 \\
+                                         & = 39601
+			\end{align*}
+		\item
+			The relative error in the RHS, in the $\infty$ norm, is
+			\begin{align*}
+				\frac{\|e_b\|_{\infty}}{\|b\|_{\infty}} & = \frac{0.05}{1.005} \\
+                                                                        & \approx 0.05
+			\end{align*}
+		\item
+			\begin{align*}
+				\frac{\|e_x\|_{\infty}}{\|x\|_{\infty}} & \le \cond(A) \frac{\|e_b\|_{\infty}}{\|b\|_{\infty}} \\
+                                                                        & = \left( 199^2 \right) \left( 0.05 \right)           \\
+                                                                        & \approx 1980
+			\end{align*}
+		\item
+			\begin{align*}
+				x &= A^{-1} b\\
+				&=
+					\begin{pmatrix}
+						-98 & 99   \\
+						99  & -100 \\
+					\end{pmatrix}
+					\begin{pmatrix}
+						1.005 \\
+						0.995 \\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\tilde{x} &= A^{-1} \tilde{b}\\
+				&= A^{-1} (b - e_b)\\
+				&=
+					\begin{pmatrix}
+						-98 & 99   \\
+						99  & -100 \\
+					\end{pmatrix}
+					\begin{pmatrix}
+						1.005 - 0.05 \\
+						0.995 + 0.05 \\
+					\end{pmatrix}\\
+				&=
+					\begin{pmatrix}
+						9.865  \\
+						-9.955 \\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\frac{\left\| x - \tilde{x} \right\|_{\infty}}{\|x\|_{\infty}} & = 664
+			\end{align*}
+			Therefore, the error is approximately $\frac{1}{3}$ of the bound from 3.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let $A$ be a matrix, and $x_0$ be a vector.
+	Consider the iterative method
+	\begin{align*}
+		x_{n + 1} & = A x_n
+	\end{align*}
+	\begin{enumerate}
+		\item
+			Prove
+			\begin{align*}
+				x_n & = A^n x_0
+			\end{align*}
+		\item
+			Assume that $\|A\| < 1$ in some norm.
+			Prove
+			\begin{align*}
+				\lim\limits_{n \to \infty} x_n & = \overrightarrow{0}
+			\end{align*}
+			You may use the proposition
+			\begin{align*}
+				\lim\limits_{n \to \infty} x_n          & = \overrightarrow{0} \\
+				\iff \lim\limits_{n \to \infty} \|x_n\| & = 0
+			\end{align*}
+		\item
+			Let
+			\begin{align*}
+				A &=
+					\begin{pmatrix}
+						0           & 2 \\
+						\frac{1}{3} & 0 \\
+					\end{pmatrix}
+			\end{align*}
+			Calculate the $1$, $2$, and $\infty$ norms of $A$.
+			Can you use section 2, in order to prove or disprove $\lim\limits_{n \to \infty} x_n = \overrightarrow{0}$ ?
+		\item
+			Calculate $A^2$, and the $\infty$ norm of $A^2$.
+		\item
+			Use $A^2$ and $\left\| A^2 \right\|_{\infty}$ to show
+			\begin{align*}
+				\lim\limits_{n \to \infty} x_n & = \overrightarrow{0}
+			\end{align*}
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				x_{n + 1} & = A x_n           \\
+                                          & = A (A x_{n - 1}) \\
+                                          & \vdots            \\
+                                          & = A^n x_0
+			\end{align*}
+		\item
+			\begin{align*}
+				\lim\limits_{n \to \infty} \|x_n\| & = \lim\limits_{n \to \infty} \left\| A^n x_0 \right\| \\
+                                                                   & = \lim\limits_{n \to \infty} \|A\|^n \|x_0\|          \\
+                                                                   & = 0
+			\end{align*}
+			Therefore, by the proposition,
+			\begin{align*}
+				\lim\limits_{n \to \infty} x_n & = \overrightarrow{0}
+			\end{align*}
+		\item
+			\begin{align*}
+				A &=
+					\begin{pmatrix}
+						0           & 2 \\
+						\frac{1}{3} & 0 \\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\|A\|_1 & = 2
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\|A\|_2 & = 2
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\|A\|_{\infty} & = 2
+			\end{align*}
+			As $\|A\| > 1$, section 2 cannot be used.
+			Hence, the limit is zero if and only if $x_n = \overrightarrow{0}$.
+		\item
+			\begin{align*}
+				A &=
+					\begin{pmatrix}
+						0           & 2 \\
+						\frac{1}{3} & 0 \\
+					\end{pmatrix}\\
+				\therefore A^2 &=
+					\begin{pmatrix}
+						\frac{2}{3} & 0           \\
+						0           & \frac{2}{3} \\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\left\| A^2 \right\|_{\infty} & = \frac{2}{3}
+			\end{align*}
+			Therefore, using section 2,
+			\begin{align*}
+				\lim\limits_{n \to \infty} x_n & = \overrightarrow{0}
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\end{document}
