@@ -1029,4 +1029,179 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 	\end{enumerate}
 \end{solution}
 
+\recitation
+\section{Iterative Methods for Systems of Linear Equations}
+
+\begin{algorithm}[H]
+	\caption{Jacobi Method}
+	\begin{algorithmic}[1]
+		\State{Find lower triangular $L$, diagonal $D$, and upper triangular $U$, such that $A = L + D + U$}
+		\State{$C \gets D^{-1}$}
+		\State{$B_J \gets \left( I - D^{-1} A \right) = -D^{-1} (L + U)$}
+		\State{$d_J \gets D^{-1} b$}
+		\State{$x^{(n + 1)} \gets B x^{(n)} + d$}
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\caption{Gauss-Seidel Method}
+	\begin{algorithmic}[1]
+		\State{Find lower triangular $L$, diagonal $D$, and upper triangular $U$, such that $A = L + D + U$}
+		\State{$C \gets (L + D)^{-1}$}
+		\State{$B_{GS} \gets \left( I - (L + D)^{-1} A \right) = -(L + D)^{-1} U$}
+		\State{$d_{GS} \gets (L + D)^{-1} b$}
+		\State{$x^{(n + 1)} \gets B x^{(n)} + d$}
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}[Sufficient condition for convergence of iterative method for systems of linear equations]
+	Let $\|\cdot\|$ be a norm.
+	If $\|B\| < 1$, then the method
+	\begin{align*}
+		x^{(n + 1)} & = B x^{(n)} + d
+	\end{align*}
+	converges for any initial condition $x^{(0)}$.
+\end{theorem}
+
+\begin{theorem}[Necessary condition for convergence of iterative method for systems of linear equations]
+	The method
+	\begin{align*}
+		x^{(n + 1)} & = B x^{(n)} + d
+	\end{align*}
+	converges for any $x^{(0)}$, if and only if
+	\begin{align*}
+		\rho(B) & < 1
+	\end{align*}
+\end{theorem}
+
+\begin{question}
+	Let
+	\begin{align*}
+		A &=
+			\begin{pmatrix}
+				a & b \\
+				c & d \\
+			\end{pmatrix}
+	\end{align*}
+	Consider the system
+	\begin{align*}
+		A x & = \alpha
+	\end{align*}
+	\begin{enumerate}
+		\item Write $B$ for Jacobi and Gauss-Seidel methods.
+		\item Find, for each method, a sufficient condition for convergence based on the $\infty$ norm.
+		\item Find, for each method, an equivalent condition for convergence.
+		\item Does the Jacobi method converge if and only if the Gauss-Seidel method converges?
+		\item Find a matrix $A$ such that the above equivalent condition is met, but the above sufficient condition is not.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				B_J &= -D^{-1} (L + U)\\
+				&= -
+					\begin{pmatrix}
+						a & 0 \\
+						0 & d \\
+					\end{pmatrix}^{-1}
+					\begin{pmatrix}
+						0 & b \\
+						c & 0 \\
+					\end{pmatrix}\\
+				&=
+					\begin{pmatrix}
+						-\frac{1}{a} & 0            \\
+						0            & -\frac{1}{d} \\
+					\end{pmatrix}
+					\begin{pmatrix}
+						0 & b \\
+						c & 0 \\
+					\end{pmatrix}\\
+				&=
+					\begin{pmatrix}
+						0            & -\frac{b}{a} \\
+						-\frac{c}{d} & 0            \\
+					\end{pmatrix}
+			\end{align*}
+			\begin{align*}
+				B_{GS} &= -(L + D)^{-1} U\\
+				&= -
+					\begin{pmatrix}
+						a & 0 \\
+						c & d \\
+					\end{pmatrix}^{-1}
+					\begin{pmatrix}
+						0 & b \\
+						0 & 0 \\
+					\end{pmatrix}\\
+				&=
+					\begin{pmatrix}
+						-\frac{1}{a}  & 0            \\
+						\frac{c}{a d} & -\frac{1}{d} \\
+					\end{pmatrix}
+					\begin{pmatrix}
+						0 & b \\
+						0 & 0 \\
+					\end{pmatrix}\\
+				&=
+					\begin{pmatrix}
+						0 & -\frac{b}{a}    \\
+						0 & \frac{b c}{a d} \\
+					\end{pmatrix}
+			\end{align*}
+		\item
+			A sufficient condition for convergence, for the Jacobi method is
+			\begin{align*}
+				\|B_J\|_{\infty}                                                                        & < 1 \\
+				\therefore \max\left\{ \left| \frac{b}{a} \right| , \left| \frac{c}{d} \right| \right\} & < 1
+			\end{align*}
+			A sufficient condition for convergence, for the Gauss-Seidel method is
+			\begin{align*}
+				\|B_{GS}\|_{\infty}                                                                         & < 1 \\
+				\therefore \max\left\{ \left| \frac{b}{a} \right| , \left| \frac{b c}{a d} \right| \right\} & < 1
+			\end{align*}
+		\item
+			An equivalent condition for convergence, for the Jacobi method is
+			\begin{align*}
+				\rho(B_J)                                       & < 1 \\
+				\therefore \max\{\lambda_1\}                    & < 1 \\
+				\therfore \sqrt{\left| \frac{b c}{a d} \right|} & < 1
+			\end{align*}
+			Similarly,
+			\begin{align*}
+				\rho(B_{GS})                              & < 1 \\
+				\therefore \left| \frac{b c}{a d} \right| & < 1
+			\end{align*}
+		\item
+			\begin{align*}
+				\rho(B_j)                                  & < 1 \\
+				\iff \sqrt{\left| \frac{b c}{a d} \right|} & < 1 \\
+				\iff \left| \frac{b c}{a d} \right|        & < 1 \\
+				\iff \rho(B_{GS})                          & < 1
+			\end{align*}
+			Therefore, the Jacobi method converges if and only if the Gauss-Seidel method converges.
+		\item
+			For the above equivalent condition to be met,
+			\begin{align*}
+				\left| \frac{b c}{a d} \right| & < 1 \\
+				\iff |b c|                     & < |a d|
+			\end{align*}
+			For the above sufficient condition to be not met,
+			\begin{align*}
+				\left| \frac{b}{a} \right| & > 1 \\
+				\iff b > a
+			\end{align*}
+			Therefore, if
+			\begin{align*}
+				a & = 1           \\
+				b & = 2           \\
+				c & = \frac{1}{4} \\
+				d & = 1
+			\end{align*}
+			the matrix $A$ converges.
+	\end{enumerate}
+\end{solution}
+
 \end{document}
