@@ -1,4 +1,4 @@
-\documentclass[fleqn, a4paper, 12pt, twoside]{article}
+\documentclass[fleqn, a4paper, 12pt, twoside, titlepage]{article}
 \usepackage{exsheets} %question and solution environments
 \usepackage{amsmath, amssymb, amsthm} %standard AMS packages
 \usepackage{esint} %integral signs
@@ -40,6 +40,7 @@
 	}
 \usepackage{algpseudocode} %algorithms
 \usepackage{algorithm} %algorithms
+\usepackage{todonotes}
 
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
 
@@ -54,6 +55,11 @@
 \newcommand{\curl}{\mathrm{curl\,}}
 
 \newcommand{\divergence}{\mathrm{div\,}}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\DeclareMathOperator{\cond}{cond}
 
 \makeatletter
 \@addtoreset{section}{part} %resets section numbers in new part
@@ -112,6 +118,7 @@ Office Hours: Sundays, 10:00--12:00
 \end{enumerate}
 
 \newpage
+\part{Representation of Numbers and Errors}
 
 \section{Floating Point Representation}
 
@@ -333,6 +340,9 @@ Office Hours: Sundays, 10:00--12:00
 	\end{algorithmic}
 	This is done to avoid subtraction of numbers close to each other, and hence avoid the possible error.
 \end{solution}
+
+\newpage
+\part{Approximation of Functions}
 
 \section{Series of Approximations}
 
@@ -988,7 +998,7 @@ Therefore, the total number of operations needed to calculate $P_n(x)$ is big-O 
 
 \begin{definition}[Divided difference]
 	\begin{align*}
-		f[x_0,\dots,x_k] & = \frac{f[x_1,\dots,x_k] - f[x_0,\dots,x_{k - 1]}}{x_k - x_0} \\
+		f[x_0,\dots,x_k] & = \frac{f[x_1,\dots,x_k] - f[x_0,\dots,x_{k - 1}]}{x_k - x_0} \\
 		f[x_0]           & = f(x_0)
 	\end{align*}
 	is called the $k$th order divided difference of $f(x)$.
@@ -1048,5 +1058,1055 @@ Therefore, the total number of operations needed to calculate $P_n(x)$ is big-O 
 		A_2 & = k[1,4,6]
 	\end{align*}
 \end{solution}
+
+\section{Error in Interpolation}
+
+\begin{definition}[Error in interpolation]
+	The error in interpolation is defined to be
+	\begin{align*}
+		e(x) &= f(x) - p_k(x)
+	\end{align*}
+\end{definition}
+
+\begin{theorem}
+	\begin{align*}
+		e(x) &= f[x_0,\dots,x_k,x] \prod\limits_{i = 0}^{k} (x - x_i)
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}[Rolle's Theorem]
+	Let $f$ be continuous on $[a,b]$, with a continuous derivative on $(a,b)$, and $f(a) = f(b) = 0$.
+	Then, $\exists \varepsilon \in (a,b)$, such that
+	\begin{align*}
+		f'(\varepsilon) &= 0
+	\end{align*}
+	\label{Rolle's_Theorem}
+\end{theorem}
+
+\begin{theorem}[Lagrange's Mean Value Theorem]
+	Let $f$ be continuous on $[a,b]$, with a continuous derivative on $(a,b)$.
+	Then, $\exists \varepsilon \in (a,b)$, such that
+	\begin{align*}
+		f'(\varepsilon) &= \frac{f(b) - f(a)}{b - a}
+	\end{align*}
+	\label{Lagrange's_Mean_Value_Theorem}
+\end{theorem}
+
+\begin{theorem}
+	\marginnote
+	{
+		This theorem is a general case of \nameref{Lagrange's_Mean_Value_Theorem}.
+	}
+	Let $f$ be continuous on $[a,b]$ with $k$ continuous derivatives on $(a,b)$.
+	Then, $\exists \varepsilon \in (a,b)$, such that
+	\begin{align*}
+		f[x_0,\dots,x_k] &= \frac{f^{(k)}(\varepsilon)}{k!}
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}
+	Let $f$ be continuous on $[a,b]$ with $n$ continuous derivatives on $(a,b)$, not necessarily distinct.
+	Then, the interpolation polynomial is
+	\begin{align*}
+		p_n(x) &= \sum\limits_{i = 0}^{n} f[x_0,\dots,x_i] \prod\limits_{j = 0}^{i - 1} (x - x_j)
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}
+	Let $f$ be continuous on $[a,b]$ with $k$ continuous derivatives on $(a,b)$, not necessarily distinct.\\
+	If
+	\begin{align*}
+		\left| \frac{f^{(k + 1)}(\varepsilon)}{(k + 1)!} \right| &\le M
+	\end{align*}
+	then, for $\forall \varepsilon \in [x_0,x_k]$,
+	\begin{align*}
+		\left| e(x) \right| &\le \left| \frac{f^{(k + 1)}(\varepsilon)}{(k + 1)!} \prod\limits_{i = 0}^{k} (x - x_i) \right|
+	\end{align*}
+\end{theorem}
+
+\subsection{Minimizing the Maximum Error}
+
+\begin{theorem}
+	The minimum error in interpolation is given by
+	\begin{align*}
+		\min\limits_{0 \le x_0 \le \dots \le x_k} \left( \max\left| \prod\limits_{i = 0}^{k} (x - x_i) \right| \right) &= \min\limits_{0 \le x_0 \le \dots \le x_k} \left( \max\left| p_{k + 1}(x) \right| \right)
+	\end{align*}
+\end{theorem}
+
+\begin{definition}[Chebyshev polynomial]
+	The Chebyshev polynomial is defined as
+	\begin{align*}
+		T_n(x) &= \cos(n \cos^{-1} x)
+	\end{align*}
+\end{definition}
+
+\begin{theorem}
+	If $x = \cos \theta$,
+	\begin{align*}
+		T_0(x) &= 1\\
+		T_1(x) &= x\\
+		&\vdots\\
+		T_{n + 1}(x) &= 2 x T_n(x) - T_{n - 1}(x)
+	\end{align*}
+	And hence,
+	\begin{align*}
+		T_n(x) &= \prod\limits_{i = 0}^{n - 1} (x - x_i)
+	\end{align*}
+	where
+	\begin{align*}
+		x_i &= \cos\left( \frac{(2 i + 1) \pi}{2 n} \right)
+	\end{align*}
+	$\forall i \in \{0,\dots,n - 1\}$.
+\end{theorem}
+
+\newpage
+\part{Solutions of Equations}
+
+\section{Solving Non-linear Equations}
+
+\subsection{Bisection Method}
+
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\State{Let $f$ be continuous on $[a,b]$, such that $f(a) f(b) < 0$.}
+		\State{$m \gets \frac{a_n + b_n}{2}$}
+		\If{$f(a_n) f(m) < 0$}
+			\State{$a_{n + 1} \gets a_n$}
+			\State{$b_{n + 1} \gets m$}
+			\State{$r_n \gets b_{n + 1}$}
+		\Else
+			\State{$a_{n + 1} \gets m$}
+			\State{$b_{n + 1} \gets a_n$}
+			\State{$r_n \gets a_{n + 1}$}
+		\EndIf
+		\State{$r \gets \lim\limits_{n \to \infty} r_n$}
+		\State{$r$ is a root of the equation $f(x) = 0$}
+	\end{algorithmic}
+	\caption{Bisection Method}
+\end{algorithm}
+
+\begin{theorem}
+	Let $f$ be continuous on $[a,b]$, such that $f(a) f(b) < 0$, where $\{r_n\}$ are generated by the bisection algorithm.
+	Then
+	\begin{align*}
+		\lim\limits_{n \to \infty} r_n &= r
+	\end{align*}
+	such that $f(r) = 0$, and
+	\begin{align*}
+		|r_n - r| &< \frac{b - a}{2^n}
+	\end{align*}
+	where $n \in \mathbb{N}$.
+\end{theorem}
+
+\subsection{Regula Falsi}
+
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\State Let $f$ be continuous on $[a,b]$, such that $f(a) f(b) < 0$.
+		\If{$f(a_n) f(x_n) < 0$}
+			\State{$b_{n + 1} \gets x_n$}
+		\Else
+			\State{$a_{n + 1} \gets x_n$}
+		\EndIf
+		\State{Solve $p_1(x) = f(a_n) + f[a_n,b_n] (x - a_n)$ for $x_n$}
+		\State{$x_n \gets \frac{f(b_n) a_n - f(a_n) b_n}{f(b_n) - f(a_n)}$}
+		\State{$r \gets \lim\limits_{n \to \infty} r_n$}
+	\end{algorithmic}
+	\caption{Regula Falsi Method}
+\end{algorithm}
+
+\section{Newton-Raphson Method}
+
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\State{Choose $x_0 \in \mathbb{R}$ to be the first approximation of $f(x)$.}
+		\State{$x_{n + 1} \gets x_n - \frac{f(x_n)}{f'(x_n)}$}
+	\end{algorithmic}
+	\caption{Newton-Raphson Method}
+\end{algorithm}
+
+\begin{question}
+	Solve
+	\begin{align*}
+		x &= a^{\frac{1}{m}}
+	\end{align*}
+	using Newton-Raphson method, and hence find $\sqrt{2}$.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		x &= a^{\frac{1}{m}}\\
+		\therefore x^m &= a
+	\end{align*}
+	Therefore, let
+	\begin{align*}
+		f(x) &= x^m - a
+	\end{align*}
+	Therefore, the solution to the equation is the solution to
+	\begin{align*}
+		f(x) &= 0
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f(x) &= x^m - a\\
+		\therefore f'(x) &= m x^{m - 1}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x_{n + 1} &= x_n - \frac{f(x_n)}{f'(x_n)}\\
+		&= \frac{{x_n}^m - a}{m {x_n}^{m - 1}}\\
+		&= \frac{m {x_n}^m - {x_n}^m + a}{m {x_n}^{m - 1}}\\
+		&= \frac{1}{m} \left( \frac{a}{{x_n}^{m - 1}} + (m - 1) x_n \right)
+	\end{align*}
+	Therefore, if $m = 2$,
+	\begin{align*}
+		x_{n + 1} &= \frac{1}{2} \left( \frac{a}{x_n} + x_n \right)
+	\end{align*}
+	Therefore, if $a = 2$,
+	\begin{align*}
+		x_{n + 1} &= \frac{1}{2} \left( \frac{2}{x_n} + x_n \right)
+	\end{align*}
+	Therefore, let
+	\begin{align*}
+		x_0 &= 2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x_1 &= 1.5\\
+		x_2 &= 1.41666\\
+		x_3 &= 1.414215685
+	\end{align*}
+\end{solution}
+
+\subsection{Fixed Point Iterations}
+
+\begin{definition}[Fixed point]
+	A fixed point of a function $g(x)$ is a point which satisfies
+	\begin{align*}
+		x &= g(x)
+	\end{align*}
+\end{definition}
+
+\begin{theorem}[Fixed point theorem]
+	Let $g$ be a continuous function in $[a,b]$ such that
+	\begin{enumerate}
+		\item $\forall x \in [a,b]$, $g(x) \in [a,b]$.
+		\item $g'(x)$ exists and $\forall x \in [a,b]$, $\left| g'(x) \right| < 1$, or $g(x)$ is Lipschitz, i.e. $\left| g(x) - g(y) \right| \le k |x - y|$.
+	\end{enumerate}
+	then,
+	\begin{enumerate}
+		\item $\exists ! \xi$, such that $\xi \in [a,b]$ is a fixed point of $g(x)$.
+		\item $\forall x \in [a,b]$, the series $x_{n + 1} = g(x_n)$ converges to $\xi$.
+	\end{enumerate}
+	\label{thm:Fixed_point_theorem}
+\end{theorem}
+
+\subsection{Secant Method}
+
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\State{Choose $x_0 \in \mathbb{R}$ to be the first approximation of $f(x)$.}
+		\State{$x_{n + 1} \gets x_n - \frac{f(x_n)}{f[x_{n - 1},x_n]}$}
+	\end{algorithmic}
+	\caption{Secant Method}
+\end{algorithm}
+
+\section{Rate of Convergence}
+
+\begin{definition}[Rate of convergence]
+	Let the series $x_n$ converge to $\xi$.
+	If
+	\begin{align*}
+		\lim\limits_{n \to \infty} \frac{\left| e_{n + 1} \right|^2}{\left| e_n \right|^p} &= c
+	\end{align*}
+	where $c \neq 0 \in \mathbb{R}$.
+	Then, $p$ is the rate of convergence.
+	The rate of convergence is said to be linear if $p = 1$, and quadratic if $p = 2$.
+\end{definition}
+
+\subsection{Newton's Method}
+
+\begin{theorem}
+	The rate of convergence of Newton's method is 2.
+\end{theorem}
+
+\begin{proof}
+	Let $\xi$ be the root of $f(\xi)$.\\
+	Using the Taylor Series,
+	\begin{align*}
+		0 &= f(\xi)\\
+		&= f(x_n) + f'(x_n) (\xi - x_n) + \frac{1}{2} f''(\eta) (\xi - x_n)^2 + \dots
+	\end{align*}
+	where $\eta \in [x_n,\xi]$.\\
+	Let $f(x)$ be continuous with a continuous derivative, such that $f'(\xi) \neq 0$.\\
+	Therefore $f'(x_n) \neq 0$, for $x_n \approx \xi$.\\
+	Therefore,
+	\begin{align*}
+		0 &= f(x_n) + f'(x_n) (\xi - x_n) + \frac{1}{2} f''(\eta) (\xi - x_n)^2\\
+		\therefore -f(x_n) &= f'(x_n) (\xi - x_n) + \frac{1}{2} f''(\eta) (\xi - x_n)^2 + \dots\\
+		\therefore -\frac{f(x_n)}{f'(x_n)} &= (\xi - x_n) + \frac{1}{2} \frac{f''(\eta)}{f'(x_n)} (\xi - x_n)\\
+		\therefore \xi - \left( x_n - \frac{f(x_n)}{f'(x_n)} \right) &= -\frac{1}{2} \frac{f''(\eta)}{f'(x_n)} (\xi - x_n)^2\\
+		\therefore \xi - x_{n + 1} &= -\frac{1}{2} \frac{f''(\eta)}{f'(x_n)} (\xi - x_n)^2\\
+		\therefore e_{n + 1} &= -\frac{1}{2} \frac{f''(\eta)}{f'(x_n)} {e_n}^2\\
+		\therefore \frac{e_{n + 1}}{{e_n}^2} &= \frac{1}{2} \frac{f''(\eta)}{f'(x_n)}
+	\end{align*}
+	Therefore, assuming $f''(\xi) \neq 0$,
+	\begin{align*}
+		\therefore \lim\limits_{n \to \infty} \left| \frac{e_{n + 1}}{{e_n}^2} \right| &= \lim\limits_{n \to \infty} \left| \frac{f''(\eta)}{2 f'(x_n)} \right|\\
+		&= \frac{f''(\xi)}{2 f'(\xi)}\\
+		&= c\\
+		&\neq 0
+	\end{align*}
+	Therefore the rate of convergence of Newton's Method is 2.
+\end{proof}
+
+\subsection{Fixed Point Iterations}
+
+\begin{theorem}
+	The rate of convergence of fixed point iterations is 1.
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		\xi &= g(\xi)\\
+		&= g(x_n) + g'(\eta) (\xi - x_n)\\
+		\therefore \xi - g(x_n) &= g'(\eta) (\xi - x_n)\\
+		\therefore \xi - x_{n + 1} &= g'(\eta) (\xi - x_n)\\
+		\therefore e_{n + 1} &= g'(\eta) e_n
+	\end{align*}
+	If $g'(\xi) \neq 0$, then
+	\begin{align*}
+		\lim\limits_{n \to \infty} \frac{|e_{n + 1}|}{|e_n|} &= \lim\limits_{n \to \infty} \left| g'(\eta) \right|\\
+		&= g'(\xi)\\
+		&= c\\
+		&\neq 0
+	\end{align*}
+	Therefore the rate of convergence if 1.
+\end{proof}
+
+\subsection{Secant Method}
+
+Let
+\begin{align*}
+	f(x) &= p_1(x) + \text{error}\\
+	&= f(x_n) + f[x_n,x_{n - 1}] (x - x_n) + f[x_n,x_{n - 1},x] (x - x_n) (x - x_{n - 1})
+\end{align*}
+Therefore,
+\begin{align*}
+	0 &= f(\xi)\\
+	&= f(x_n) + f[x_n,x_{n - 1}] (\xi - x_n) + f[x_n,x_{n - 1},x] (\xi - x_n) (\xi - x_{n - 1})\\
+\end{align*}
+Therefore,
+\begin{align*}
+	-\frac{f(x_n)}{f[x_n,x_{n - 1}]} &= \xi - x_n + \frac{f[x_n,x_{n - 1},\xi]}{f[x_n,x_{n - 1}]} (\xi - x_n) (\xi - x_{n - 1})\\
+	\therefore \xi - x_n + \frac{f(x_n)}{f[x_n,x_{n - 1}]} &= -\frac{f[x_n,x_{n - 1},\xi]}{f[x_n,x_{n - 1}]} (\xi - x_n) (\xi - x_{n - 1})\\
+	\therefore \xi - x_{n + 1} &= -\frac{f[x_n,x_{n - 1},\xi]}{f[x_n,x_{n - 1}]} (\xi - x_n) (\xi - x_{n - 1})\\
+	\therefore e_{n + 1} &= -\frac{f[x_n,x_{n - 1},\xi]}{f[x_n,x_{n + 1}]} e_n e_{n - 1}
+\end{align*}
+Therefore,
+\begin{align*}
+	\lim\limits_{n \to \infty} \frac{|e_{n + 1}|}{|e_n| |e_{n - 1}|} &= \left| \frac{f[\xi,\xi,\xi]}{f[\xi,\xi]} \right|\\
+	&= \left| \frac{f''(\xi)}{2 \varphi'(\xi)} \right|\\
+	&= c
+\end{align*}
+Let $c$ be non zero.\\
+Therefore,
+\begin{align*}
+	|e_{n + 1}| &= c |e_n| |e_{n - 1}|
+\end{align*}
+Let the rate of convergence be $p$.\\
+Therefore,
+\begin{align*}
+	|e_n| &= b |e_{n - 1}|^p
+\end{align*}
+For a large $n$,
+\begin{align*}
+	|e_{n + 1}| &= b |e_n|^p
+\end{align*}
+Therefore,
+\begin{align*}
+	e_{n + 1} &= c \left| b |e_{n - 1}|^p \right| |e_{n - 1}|\\
+	&= b c |e_{n - 1}|^{p + 1}
+\end{align*}
+Therefore,
+\begin{align*}
+	|e_{n + 1}| &= b \left| b |e_{n - 1}|^p \right|^p\\
+	&= b b^p |e_{n - 1}|^{p^2}
+\end{align*}
+Therefore,
+\begin{align*}
+	c &= b^p
+\end{align*}
+Therefore,
+\begin{align*}
+	p^2 &= p + 1
+\end{align*}
+Therefore, the rate of convergence is
+\begin{align*}
+	\rho &= \frac{1 + \sqrt{5}}{2}
+\end{align*}
+
+\newpage
+\part{Linear Systems and Matrices}
+
+\begin{theorem}
+	Let $A$ be a $n \times n$ matrix.
+	Then, the following statements are equivalent.
+	\begin{enumerate}
+		\item For any vector $b$ there is a unique solution for $A x = b$.
+		\item The homogeneous system $A x = 0$ has only the trivial solution $x = 0$.
+		\item $A$ is invertible.
+		\item $\det A \neq 0$.
+	\end{enumerate}
+\end{theorem}
+
+\section{Direct Methods}
+
+\subsection{Back Substitution}
+
+\begin{algorithm}
+	\caption{Back Substitution}
+	\begin{algorithmic}[1]
+		\Require $b_{n \times 1}$, upper triangular $A_{n \times n}$
+		\Ensure $A x = b$
+		\State $x_n \gets \frac{b_n}{a_{n n}}$
+		\ForAll {$0 < k < n$}
+			\State $x_k \gets \frac{b_k - \sum\limits_{j = k + 1}^{n} a_{k j} x_j}{a_{k k}}$
+		\EndFor
+	\end{algorithmic}
+	\label{alg:Back_Substitution}
+\end{algorithm}
+
+\subsection{LU Decomposition/Gaussian Elimination}
+
+\begin{algorithm}[H]
+	\caption{LU Decomposition/Gaussian Elimination}
+	\begin{algorithmic}[1]
+		\Require invertible $A_{n \times n}$
+		\Ensure lower triangular $L_{n \times n}$, and upper triangular $U_{n \times n}$, such that ${L U = A}$
+		\Statex
+		\Procedure{RowOperation}{$(P,i,j)$}
+			\State $R_i \gets R_i - m_{i j} R_j$ \Comment{$R_i$ and $R_j$ are the $i$th and $j$th rows of $P$}
+		\EndProcedure
+		\Statex
+		\State $A^{(1)} \gets A$
+		\State $b^{(1)} \gets b$
+		\For{$k = 1,\dots,n - 1$}
+			\For{$i = k + 1,\dots,n$}
+				\State $m_{i k} \gets \frac{{a_{i k}}^{(k)}}{{a_{k k}}^{(k)}}$
+				\State $A^{(k + 1)} \gets \Call{RowOperation}{A^{(k)},i,k}$.
+			\EndFor
+		\EndFor
+		\Statex
+		\If{$i > j$}
+			\State $L_{i j} \gets m_{i j}$
+		\ElsIf{$i = j$}
+			\State $L_{i j} \gets 1$
+		\Else
+			\State $L_{i j} \gets 0$
+		\EndIf
+
+		\State $U \gets A^{(n)}$
+	\end{algorithmic}
+	\label{alg:LU_Decomposition}
+\end{algorithm}
+
+\begin{theorem}
+	Let the \nameref{alg:LU_Decomposition} of $A$ be
+	\begin{align*}
+		A &= L U
+	\end{align*}
+	Then the solution to the matrix equation
+	\begin{align*}
+		A x &= bj
+	\end{align*}
+	is given by
+	\begin{align*}
+		L y &= b
+	\end{align*}
+	where
+	\begin{align*}
+		U x &= y
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}
+	The number of operations required for solving the matrix equation ${A_{n \times n} x_{n \times 1} = b_{n \times 1}}$ using \nameref{alg:LU_Decomposition} is $\mathrm{O}\left( \frac{2}{3} n^3 \right)$.
+\end{theorem}
+
+\section{Error Analysis}
+
+\begin{definition}
+	The norm of the vector is defined to be a function from $\mathbb{R}^n$ to $\mathbb{R}$ which satisfies all of the following.
+	\begin{enumerate}
+		\item $\forall x \in \mathbb{R}^n$, $\|x\| \ge 0$.
+		\item $\|x\| = 0 \iff x = 0$.
+		\item $\forall x \in \mathbb{R}$, $\forall \alpha \in \mathbb{R}$, $\|\alpha x\| = |\alpha| \|x\|$.
+		\item $\forall x,y \in \mathbb{R}$, $\|x + y\| \le \|x\| + \|y\|$.
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}[Infinity norm]
+	The function $\max\limits_{1 \le i \le n} |y_i|$ is defined to be the infinity norm of the vector $y$.
+\end{definition}
+
+\begin{definition}[$L_1$ norm]
+	The function $\sum\limits_{i = 1}^{n} |y_i|$ is defined to be the $L_1$ norm of the vector $y$.
+\end{definition}
+
+\begin{definition}[$L_2$ norm]
+	The function $\sqrt{\sum\limits_{i = 1}^{n} {y_i}^2}$ is defined to be the $L_2$ norm of the vector $y$.
+\end{definition}
+
+\begin{definition}[Matrix norm]
+	A function from $\mathbb{R}^{n^2}$ to $\mathbb{R}$, which for every $A,B \in \mathbb{R}^{n^2}$ and for any $\alpha \in \mathbb{R}$, satisfies the following conditions is called the matrix norm of a matrix $A$.
+	\begin{enumerate}
+		\item $\|A\| \ge 0$.
+		\item $\|A\| = 0 \iff A = 0$.
+	\end{enumerate}
+\end{definition}
+
+\begin{theorem}
+	If $\|\cdot\|$ is a vector norm on $\mathbb{R}^n$, then the function
+	\begin{align*}
+		\|A\| &= \max\limits_{\|x\| = 1} \|A x\|
+	\end{align*}
+	is a matrix norm.\\
+\end{theorem}
+
+\begin{definition}[Induced norm]
+	Let $\|\cdot\|$ be a vector norm on $\mathbb{R}^n$.
+	The function
+	\begin{align*}
+		\|A\| &= \sup\limits_{\|x\| = 1} \|A x\|
+	\end{align*}
+	is called the induced norm.
+\end{definition}
+
+\begin{definition}[Induced infinity norm]
+	The function
+	\begin{align*}
+		\|A\|_{\infty} &= \sup\limits_{\|x\|_{\infty} = 1} \|A x\|_{\infty}
+	\end{align*}
+	is called the induced infinity norm.
+\end{definition}
+
+\begin{theorem}
+	\begin{equation*}
+		\sup\limits_{\|x\| = 1} \|A x\| = \sup\limits_{\|x\| \le 1} \|A x\| = \sup\limits_{\|x\| \neq 0} \frac{\|A x\|}{\|x\|}
+	\end{equation*}
+\end{theorem}
+
+\begin{theorem}
+	\begin{align*}
+		\|A\|_{\infty} &= \max\limits_{1 \le i \le n} \sum\limits_{j = 1}^{n} |a_{i j}|
+	\end{align*}
+	where $A = (a_{i j})$.
+\end{theorem}
+
+\begin{theorem}
+	\begin{align*}
+		\|A\|_1 &= \max\limits_{1 \le j \le n} \sum\limits_{i = 1}^{n} |a_{i j}|
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}
+	$\sqrt{\sum\limits_{i = 1}^{n} \sum\limits_{j = 1}^{n} (a_{i j})^2}$ is not an induced norm, for any vector norm.
+\end{theorem}
+
+\begin{definition}[Frobinus norm]
+	\begin{align*}
+		\|A\|_F &= \sqrt{\sum\limits_{i = 1}^{n} \sum\limits_{j = 1}^{n} (a_{i j})^2}
+	\end{align*}
+	is called the Frobinus norm of $A$.
+\end{definition}
+
+\begin{theorem}
+	The Frobinus norm is a matrix norm.
+\end{theorem}
+
+\begin{definition}
+	The spectral radius of a matrix $A$ is defined as
+	\begin{align*}
+		\rho(A) &= \max\limits_{1 \le i \le n} |\lambda_i|
+	\end{align*}
+	where $\lambda_i$ are the eigenvalues of $A$.
+\end{definition}
+
+\begin{theorem}
+	\begin{align*}
+		\|A\|_2 &= \sqrt{\rho\left( A^{\mathsf{T}} A \right)}
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}
+	For any matrix induced norm
+	\begin{align*}
+		\rho(A) &\le \|A\|
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}
+	For any $\varepsilon > 0$, there exists a norm for which
+	\begin{align*}
+		\|A\| &\le \rho(A) + \varepsilon
+	\end{align*}
+\end{theorem}
+
+\subsection{Error in $b$}
+
+Let $x$ be the ideal solution, and let $\tilde{x}$ be the calculated solution.
+\begin{align*}
+	e &= x - \tilde{x}
+\end{align*}
+Therefore, the ideal system is
+\begin{align*}
+	A x &= b
+\end{align*}
+and the calculated system is
+\begin{align*}
+	A \tilde{x} &= \tilde{b}
+\end{align*}
+Therefore,
+\begin{align*}
+	e &= x - \tilde{x}
+\end{align*}
+Let
+\begin{align*}
+	r &= b - \tilde{b}\\
+	&= b - A \tilde{x}
+\end{align*}
+be the residue.\\
+Therefore,
+\begin{align*}
+	A e &= A (x - \tilde{x})\\
+	&= A x - A \tilde{x}\\
+	&= b - A \tilde{x}\\
+	&= r
+\end{align*}
+Therefore,
+\begin{align*}
+	e &= A^{-1} r
+\end{align*}
+Therefore,
+\begin{align*}
+	\|e\| &= \left\| A^{-1} r \right\|\\
+	&\le \left\| A^{-1} \right\| \|r\|
+\end{align*}
+Therefore,
+\begin{align*}
+	\frac{\|e\|}{\|x\|} &= \frac{\|x - \tilde{x}\|}{\|x\|}
+\end{align*}
+Therefore,
+\begin{align*}
+	\|b\| &= \|A x\|\\
+	&\le \|A\| \|x\|\\
+	\therefore \frac{1}{\|x\|} &\le \|A\| \frac{1}{\|b\|}\\
+	\therefore \frac{\|e\|}{\|x\|} &\le \|e\| \|A\| \frac{1}{\|b\|}\\
+	&\le \|A\| \frac{1}{\|b\|} \left\| A^{-1} \right\| \|r\|\\
+	&\le \|A\| \left\| A^{-1} \right\| \frac{\|r\|}{\|b\|}
+\end{align*}
+
+\begin{definition}[Condition number]
+	\begin{align*}
+		\cond(A) &= \|A\| \left\| A^{-1} \right\|
+	\end{align*}
+	is called the condition number of $A$.
+\end{definition}
+
+\begin{theorem}
+	For any matrix $A$,
+	\begin{align*}
+		\cond(A) &\ge 1
+	\end{align*}
+\end{theorem}
+
+\subsection{Estimation of $\cond(A)$}
+
+\begin{theorem}
+	The eigenvalues of $A^{-1}$ are $\frac{1}{\lambda_i}$, where $\lambda_i$ are the eigenvalues of $A$.
+\end{theorem}
+
+\begin{proof}
+	Let $u_i$ be the eigenvectors of $A$, corresponding to $\lambda_i$.\\
+	Therefore,
+	\begin{align*}
+		A u_i &= \lambda_i u_i
+	\end{align*}
+	Therefore
+	\begin{align*}
+		A^{-1} A u_i &= A^{-1} \lambda_i u_i\\
+		\therefore u_i &= A^{-1} \lambda_1 u_i\\
+		\therefore \frac{1}{\lambda_i} u_i &= A^{-1} u_i
+	\end{align*}
+	Therefore, the eigenvalues of $A^{-1}$, corresponding to $u_i$, are $\frac{1}{\lambda_i}$.
+\end{proof}
+
+\begin{theorem}
+	\begin{align*}
+		\cond(A) &\ge \frac{\max\limits_{i} |\lambda_i|}{\min\limits_{i} |\lambda_i|}
+	\end{align*}
+	where $\lambda_i$ are the eigenvalues of $A$.
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		\rho(A) &= \max\limits_{i} |\lambda_i|\\
+		\therefore \rho\left( A^{-1} \right) &= \max\limits_{i} \frac{1}{|\lambda_i|}\\
+		&= \frac{1}{\min\limits_{i} |\lambda_i|}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\rho(A) \rho\left( A^{-1} \right) &= \frac{\max\limits_{i} |\lambda_i|}{\min\limits_{i} |\lambda_i|}
+	\end{align*}
+	Therefore, as $\rho(A) \ge \|A\|$, and $\rho\left( A^{-1} \right) \ge \left\| A^{-1} \right\|$,
+	\begin{align*}
+		\cond(A) &\ge \rho(A) \rho\left( A^{-1} \right)\\
+		\therefore \cond(A) &\ge \frac{\max\limits_{i} |\lambda_i|}{\min\limits_{i} |\lambda_i|}
+	\end{align*}
+\end{proof}
+
+\begin{theorem}
+	For any non-invertible matrix $B$,
+	\begin{align*}
+		\cond(A) &\ge \frac{\|A\|}{\|A - B\|}
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	If $B$ is non-invertible, then $\exists x \neq 0$, such that
+	\begin{align*}
+		B x &= 0
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\|A - B\| \|x\| &\ge \left\| (A - B) x \right\|\\
+		&\ge \|A x\|\\
+		&\ge \frac{\|x\|}{\left\| A^{-1} \right\|}
+	\end{align*}
+	Therefore, as $x \neq 0$,
+	\begin{align*}
+		\|x\| &\neq 0
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\|A - B\| &\ge \frac{1}{\left\| A^{-1} \right\|}\\
+		\therefore \|A\| \left\| A^{-1} \right\| &\ge \|A\| \frac{1}{\|A - B\|}\\
+		\therefore \cond(A) &\ge \|A\| \frac{1}{\|A - B\|}
+	\end{align*}
+\end{proof}
+
+\subsection{Error in $A$}
+
+Let $x$ be the ideal solution, and let $\tilde{x}$ be the calculated solution.\\
+Let
+\begin{align*}
+	\varepsilon &= (\varepsilon_{i j})
+\end{align*}
+be the error in $A$.\\
+Let
+\begin{align*}
+	e &= x - \tilde{x}
+\end{align*}
+Therefore, the ideal system is
+\begin{align*}
+	A x &= b
+\end{align*}
+and the calculated system is
+\begin{align*}
+	(A + \varepsilon) \tilde{x} &= b
+\end{align*}
+Therefore,
+\begin{align*}
+	(A + \varepsilon) \tilde{x} - A x &= 0\\
+	\therefore A \tilde{x} - A x + \varepsilon \tilde{x} &= 0\\
+	\therefore \varepsilon \tilde{x} &= A \left( x - \tilde{x} \right)\\
+	&= A e
+\end{align*}
+Therefore,
+\begin{align*}
+	e &= A^{-1} \varepsilon \tilde{x}\\
+\end{align*}
+Therefore
+\begin{align*}
+	\|e\| &= \left\| A^{-1} \right\| \|\varepsilon\| \left\| \tilde{x} \right\|\\
+	\therefore \frac{\|e\|}{\left\| \tilde{x} \right\|} &\le \|A\| \left\| A^{-1} \right\| \frac{\|\varepsilon\|}{\|A\|}\\
+	\therefore \frac{\|e\|}{\left\| \tilde{x} \right\|} &\le \cond(A) \frac{\|\varepsilon\|}{\|A\|}
+\end{align*}
+
+\subsection{Iterative Improvement}
+
+\begin{algorithm}[H]
+	\caption{Iterative Improvement}
+	\begin{algorithmic}[1]
+		\Function{LUSolution}{$A x = b$}
+			\State{$L,U \gets \Call{\nameref{alg:LU_Decomposition}}{A}$}
+			\State{Solve $L y = b$}
+			\State{Solve $U x = y$}
+			\Return{$x$}
+		\EndFunction
+		\State{Solve $A x = b$}
+		\State{$\tilde{x}^{(1)} \gets x$}
+		\For{$i = 1,2,\dots$}
+			\State{$r^{(n)} \gets b - A \tilde{x}^{(n)}$}
+			\State{\Call{LUSolution}{$A e^{(n)} = r^{(n)}$}}
+			\State{\Call{LUSolution}{$A e^{(n)} = r^{(n)}$}}
+		\EndFor
+		\State{$\tilde{x}^{(n + 1)} \gets \tilde{x}^{(n)} + e^{(n)}$}
+	\end{algorithmic}
+	\label{alg:Iterative_Improvement}
+\end{algorithm}
+
+\begin{theorem}
+	Consider a fixed point method
+	\begin{align*}
+		f(x) &= A x - b
+	\end{align*}
+	where $A$ is a matrix, and $x$ and $b$ are vectors.\\
+	If $g$ maps a closed set $S \subset \mathbb{R}^n$ to itself, and $g$ is contracting, i.e. for $k < 1$,
+	\begin{align*}
+		\left\| g(x) - g(y) \right\| &\le k \|x - y\|
+	\end{align*}
+	then,
+	\begin{enumerate}
+		\item
+			There exists a fixed point $\xi$ in $S$.
+		\item
+			The fixed point $\xi$ is unique.
+		\item
+			All series of the form $x^{(0)},x^{(1)},\dots$, such that $x^{(n + 1)} = g\left( x^{(n)} \right)$ converge to the fixed point $\xi$, i.e.,
+			\begin{align*}
+				\lim\limits_{n \to \infty} \left\| \xi - x^{(n)} \right\| &= 0
+			\end{align*}
+			i.e.,
+			\begin{align*}
+				\left\| \xi - x^{(n)} \right\| &\le \frac{k}{1 - k} \left\| x^{(n)} - x^{(n - 1)} \right\|\\
+				&\le \frac{k^n}{1 - k} \left\| x^{(1)} - x^{(0)} \right\|
+			\end{align*}
+	\end{enumerate}
+\end{theorem}
+
+\begin{theorem}
+	As the LU decomposition of $A$ needs to be calculated only once, the algorithm is $\mathrm{O}\left( n^2 \right)$.
+\end{theorem}
+
+\section{Gauss-Jacobi Method}
+
+\begin{definition}
+	A matrix $C$ is called an approximate inverse to the matrix $A$ if in some norm,
+	\begin{align*}
+		\|I - C A\| &= k
+	\end{align*}
+	such that
+	\begin{align*}
+		k &< 1
+	\end{align*}
+\end{definition}
+
+\begin{theorem}
+	If $C$ is an approximate inverse to $A$, then $A$ and $C$ are invertible matrices.
+\end{theorem}
+
+\begin{theorem}
+	Let $D$ be the matrix containing only the diagonal elements of $A$.
+	Then, $D^{-1}$ is an approximate inverse to $A$.
+\end{theorem}
+
+\begin{definition}[Gauss-Jacobi Method]
+	The iterative method
+	\begin{align*}
+		x^{(n + 1)} &= x^{(n)} + D^{-1} \left( b - A x^{(n)} \right)
+	\end{align*}
+	is called the Gauss-Jacobi Method.
+\end{definition}
+
+\begin{theorem}
+	The number of operations in the Gauss-Jacobi Method is $\mathrm{O}\left( n^2 \right)$.
+\end{theorem}
+
+\begin{theorem}
+	Let $D$ be the matrix containing only the diagonal elements of $A$.
+	Then
+	\begin{align*}
+		D^{-1}_{i j} &= \frac{1}{a_{i i}} \delta_{i j}
+	\end{align*}
+	where $\delta_{i j}$ is the Kronecker delta function.
+\end{theorem}
+
+\begin{algorithm}[H]
+	\caption{Gauss-Jacobi Method}
+	\begin{algorithmic}[1]
+		\State{Find lower triangular $L$, diagonal $D$, and upper triangular $U$, such that $A = L + D + U$}
+		\State{$C \gets D^{-1}$}
+		\State{$B_J \gets \left( I - C A \right) = -C (L + U)$}
+		\Comment{$\|B_J\|$ is called the contraction coefficient.}
+		\State{$d_J \gets C b$}
+		\State{$x^{(n + 1)} \gets B x^{(n)} + d$}
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\caption{Gauss-Seidel Method}
+	\begin{algorithmic}[1]
+		\State{Find lower triangular $L$, diagonal $D$, and upper triangular $U$, such that $A = L + D + U$}
+		\State{$C \gets (L + D)^{-1}$}
+		\State{$B_{GS} \gets \left( I - C A \right) = -C U$}
+		\State{$d_{GS} \gets C b$}
+		\State{$x^{(n + 1)} \gets B x^{(n)} + d$}
+	\end{algorithmic}
+\end{algorithm}
+
+\newpage
+\part{Numerical Differentiation and Integration}
+
+\section{Rule, Nodes, and Weights}
+
+Consider a linear operator $L$, i.e.,
+\begin{align*}
+	L(a f + b g) &= a L(f) + b L(g)
+\end{align*}
+where $f$ and $g$ are two functions.\\
+Let $p_k$ be the interpolation polynomial of $f(x)$.\\
+Therefore,
+\begin{align*}
+	e(x) &= f(x) - p_k(x)\\
+	\therefore L(e) &= L(f) - L(p_k)
+\end{align*}
+For example, for Lagrange interpolation,
+\begin{align*}
+	p_k(x) &= \sum\limits_{i = 0}^{k} f(x_i) l_i(x)
+\end{align*}
+where all $l_i$ are Lagrange polynomials with respect to the corresponding $x_i$.\\
+Therefore,
+\begin{align*}
+	L(p_k) &= \sum\limits_{i = 0}^{k} f(x_i) L(l_i)
+\end{align*}
+Therefore,
+\begin{align*}
+	L(f) &\approx \sum\limits_{i = 0}^{k} w_i f(x_i)
+\end{align*}
+where $f(x_i)$ are called the nodes, $w_i$ are called the weights, and the entire expression is called the rule.
+
+\section{Numerical Differentiation}
+
+\subsection{$k = 1$}
+
+\begin{align*}
+	p_1(x) &= f(x_0) + f[x_0,x_1] (x - x_0)
+\end{align*}
+Therefore,
+\begin{align*}
+	D_a(f) &\approx D_a(p_1)\\
+	\therefore f'(x) &\approx f[x_0,x_1]
+\end{align*}
+~\\
+Let 
+\begin{align*}
+	a &= x_0\\
+	h &= x_1 - x_0
+\end{align*}
+Therefore,
+\begin{align*}
+	f'(a) &\approx f[a,a + h]\\
+	&\approx \frac{f(a + h) - f(a)}{h}
+\end{align*}
+Therefore,
+\begin{align*}
+	\left| E(f) \right| &= \left| \frac{1}{2} h f''(\eta) \right|
+\end{align*}
+where $\eta \in [a,a + h]$.\\
+This is called the forward difference scheme.\\
+~\\
+Let
+\begin{align*}
+	a &= x_0\\
+	h &= x_0 - x_1
+\end{align*}
+Therefore,
+\begin{align*}
+	f'(a) &\approx f[a,a - h]\\
+	&\approx \frac{f(a) - f(a - h)}{h}
+\end{align*}
+Therefore,
+\begin{align*}
+	\left| E(f) \right| &= \left| \frac{1}{2} h f''(\eta) \right|
+\end{align*}
+where $\eta \in [a,a + h]$.\\
+This is called the backward difference scheme.\\
+~\\
+Let $a = \frac{x_0 - x_1}{2}$, and $h = \frac{x_1 - x_0}{2}$.\\
+\begin{align*}
+	a &= \frac{x_0 - x_1}{2}\\
+	h &= \frac{x_1 - x_0}{2}
+\end{align*}
+Therefore,
+\begin{align*}
+	f'(a) &\approx f[a - h,a + h]\\
+	&\approx \frac{f(a - h) - f(a + h)}{2 h}
+\end{align*}
+Therefore,
+\begin{align*}
+	\left| E(f) \right| &= \left| \frac{h^2}{6} f'''(\eta) \right|
+\end{align*}
+where $\eta \in [a,a + h]$.\\
+This is called the central difference scheme.\\
+
+\subsection{$k = 2$}
+
+\begin{align*}
+	p_2(x) &= f(x_0) + f[x_0,x_1] (x - x_0) + f[x_0,x_1,x_2] (x - x_0) (x - x_1)
+\end{align*}
+Therefore,
+\begin{align*}
+	D_a(f) &\approx D_a(p_2)\\
+	\therefore f'(x) &\approx f[x_0,x_1] + f[x_0,x_1,x_2] (x - x_1 + x - x_0)
+\end{align*}
+~\\
+Let
+\begin{align*}
+	a &= x_0
+\end{align*}
+Therefore,
+\begin{align*}
+	f'(a) &\approx f[a,x_1] + f[a,x_1,x_2] (a - x_1)
+\end{align*}
+
+\subsection{Error Analysis}
+
+Let
+\begin{align*}
+	f(x) &= p_k(x) + e(x)\\
+	&= p_k(x) + f[x_0,\dots,x_k,x] \prod\limits_{i = 0}^{k} (x - x_i)
+\end{align*}
+Let
+\begin{align*}
+	\psi_k(x) &= \prod\limits_{i = 0}^{k} (x - x_i)
+\end{align*}
+Therefore,
+\begin{align*}
+	f(x) &= p_k(x) + f[x_0,\dots,x_k,x] \psi_k(x)
+\end{align*}
+Therefore,
+\begin{align*}
+	f'(x) &= {p_k}'(x) + \dod{}{x}\left( f[x_0,\dots,x_k,x] \psi_k(x) \right)
+\end{align*}
+By definition,
+\begin{align*}
+	\dod{}{x}f[x_0,\dots,x_k,x] &= f[x_0,\dots,x_k,x,x]
+\end{align*}
+Therefore,
+\begin{align*}
+	f'(x) &= {p_k}'(x) + f[x_0,\dots,x_k,x,x] \psi(x) + f[x_0,\dots,x_k,x] {\psi_k}'(x)
+\end{align*}
+Therefore,
+\begin{align*}
+	e(x) &= f'(x) - {p_k}'(x)\\
+	&= f[x_0,\dots,x_k,x,x] \psi_k(x) + f[x_0,\dots,x_k,x] {\psi_k}'(x)
+\end{align*}
+Therefore,
+\begin{align*}
+	e(x) &= \frac{f^{(k + 2)}(\xi)}{(k + 2)!} \psi_k(x) + \frac{f^{(k + 1)}(\eta)}{(k + 1)!} {\psi_k}'(x)
+\end{align*}
+where $\xi,\eta \in [x_0,x_k]$.
 
 \end{document}
