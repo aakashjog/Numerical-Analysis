@@ -73,6 +73,8 @@
 	\endgroup
 }
 
+\renewcommand{\marginfont}{\scriptsize \color{blue}}
+
 \renewcommand{\tilde}{\widetilde}
 
 \RenewQuSolPair{question}[name=Recitation \therecitationcount\ -- Exercise]{solution}[name=Recitation \therecitationcount\ -- Solution]
@@ -1088,11 +1090,39 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 		A x & = \alpha
 	\end{align*}
 	\begin{enumerate}
-		\item Write $B$ for Jacobi and Gauss-Seidel methods.
-		\item Find, for each method, a sufficient condition for convergence based on the $\infty$ norm.
-		\item Find, for each method, an equivalent condition for convergence.
-		\item Does the Jacobi method converge if and only if the Gauss-Seidel method converges?
-		\item Find a matrix $A$ such that the above equivalent condition is met, but the above sufficient condition is not.
+		\item
+			Write $B$ for Jacobi and Gauss-Seidel methods.
+		\item
+			Find, for each method, a sufficient condition for convergence based on the $\infty$ norm.
+		\item
+			Find, for each method, an equivalent condition for convergence.
+		\item
+			Does the Jacobi method converge if and only if the Gauss-Seidel method converges?
+		\item
+			Find a matrix $A$ such that the above equivalent condition is met, but the above sufficient condition is not.
+		\item
+			Let
+			\begin{align*}
+				A &=
+					\begin{pmatrix}
+						2 & 1 \\
+						1 & 2 \\
+					\end{pmatrix}
+			\end{align*}
+			and
+			\begin{align*}
+				\|B_J\|_{\infty}    & = \frac{1}{2} \\
+				\|B_{GS}\|_{\infty} & = \frac{1}{2}
+			\end{align*}
+			If
+			\begin{align*}
+				x^{(0)} &=
+					\begin{pmatrix}
+						0 \\
+						0 \\
+					\end{pmatrix}
+			\end{align*}
+			then how many iterations are required in order to guarantee a relative error $\frac{\left\| e^{(k)} \right\|_{\infty}}{\|x\|_{\infty}}$ less than $10^{-6}$?
 	\end{enumerate}
 \end{question}
 
@@ -1201,6 +1231,114 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 				d & = 1
 			\end{align*}
 			the matrix $A$ converges.
+		\item
+			\begin{align*}
+				e^{(k)} & = x - x^{(k)} \\
+                                        & = B^k e^{(0)}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\left\| e^{(k)} \right\| & = \left\| B^k e^{(0)} \right\|                    \\
+                                                         & \le \left\| B^k \right\| \left\| e^{(0)} \right\| \\
+                                                         & \le \|B\|^k \|x - 0\|
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\frac{\left\| e^{(k)} \right\|_{\infty}}{\|x\|_{\infty}} & \le {\|B\|_{\infty}}^k \\
+                                                                                         & = 2^{-k}
+			\end{align*}
+			Therefore, for the required accuracy,
+			\begin{align*}
+				{\|B\|_{\infty}}^k & < 10^{-6} \\
+				\therefore 2^{-k}  & < 10^{-6}
+			\end{align*}
+			Therefore, $k = 20$ is sufficient for the required accuracy.
+	\end{enumerate}
+\end{solution}
+
+\recitation
+\section{Numerical Differentiation}
+
+\begin{question}
+	Let $f \in C^4$, with samples of $f$ at $-h$, $2 h$, and a sample of $f'$ at $-h$ given.
+	\begin{enumerate}
+		\item Calculate Hermite's interpolation polynomial and derive the formula for the error.
+		\item Find an approximation of $f'(h)$ by differentiating the sum of the interpolation polynomial and the error.
+	\end{enumerate}<++>
+\end{question}<++>
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			Let
+			\begin{align*}
+				x_0 & = -h \\
+				x_1 & = -h \\
+				x_2 & = 2 h
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0] & = f(-h) \\
+				f[x_1] & = f(-h) \\
+				f[x_2] & = f(2 h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1] & = f'(-h) \\
+				f[x_1,x_2] & = \frac{f(2 h) - f(-h)}{3 h}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1,x_2] & = \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p_2(x) & = f[x_0] + f[x_0,x_1] (x - x_0)^2 + f[x_0,x_1,x_2] (x - x_0) (x - x_2) \\
+                                       & = f(-h) + f'(-h) (x + h) + \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2} (x + h)^2
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\psi(x) & = \prod (x - x_i) \\
+                                        & = (x + h)^2 (x - 2 h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f(x) & = p_2(x) + f[-h,-h,2 h,x] \psi(x) \\
+                                     & = p_2(x) f[-h,-h,2 h,x] (x + h)^2 (x - 2 h)
+			\end{align*}
+			Therefore, the error is
+			\begin{align*}
+				e(x) & = f[-h,-h,2 h,x] (x + h)^2 (x - 2 h)
+			\end{align*}
+		\item
+			\begin{align*}
+				f'(h)                & \approx {p_2}'(h)                                              \\
+				\therefore {p_2}'(x) & = f'(-h) + 2 \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2} (x + h) \\
+				\therefore {p_2}'(h) & = f'(-h) + 4 \frac{f(2 h) - f(-h) - 3 h f(-h)}{9 h}            \\
+				\therefore f'(h)     & \approx f'(-h) + 4 \frac{f(2 h) - f(-h) - 3 h f(-h)}{9 h}
+			\end{align*}
+			The error is
+			\begin{align*}
+				f(x)             & = p_2(x) + e(x)     \\
+				\therefore f'(x) & = {p_2}'(x) + e'(x) \\
+				\therefore f'(h) & = {p_2}'(h) + e'(h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e(x)             & = f[-h,-h,2 h] \psi(x)                               \\
+				\therefore e'(x) & = f[-h,-h,2 h,x,x] \psi(x) + f[-h,-h,2 h,x] \psi'(x) \\
+				\therefore e'(h) & = f[-h,-h,2 h,h,h] \psi(h) + f[-h,-h,2 h,h] \psi'(h)
+			\end{align*}
+			Therefore, substituting $\psi(h)$ and $\psi'(h)$, for $c \in [-h,2 h]$,
+			\begin{align*}
+				e'(h)  & = f[-h,-h,2 h,h,h] \left( -4 h^3 \right)
+				\marginnote
+				{
+					$f[x_0,\dots,x_n] = \frac{f^{(n)}(c)}{n!}$
+				}     \\
+                                       & = -\frac{f^{(4)}(c)}{4!} 4 h^3 \\
+                                       & = \mathrm{O}\left( h^3 \right)
+			\end{align*}
 	\end{enumerate}
 \end{solution}
 
