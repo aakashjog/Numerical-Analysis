@@ -1,0 +1,303 @@
+\documentclass[fleqn, a4paper, 11pt, oneside, reqno]{amsart}
+%\usepackage[top = 2cm, bottom = 1cm, left = 1cm, right = 1cm]{geometry}
+\usepackage{exsheets, tasks}
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units, space-before-unit]{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+\usetikzlibrary{calc, hobby, patterns, intersections, decorations.markings}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac} %inline fractions
+\usepackage{enumerate,enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage{circuitikz}[american voltages, american currents] %circuit diagrams
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\newcommand{\AxisRotator}[1][rotate=0]{
+	\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
+} %rotation symbols on axes
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}
+\renewcommand{\thesection}{(\arabic{section})}
+
+\DeclareMathOperator{\cond}{cond}
+
+%section headings on left
+\makeatletter
+\def\specialsection{\@startsection{section}{1}%
+	\z@{\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\centering}}% DELETED
+	{\normalfont}}% NEW
+\def\section{\@startsection{section}{1}%
+	\z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+	%  {\normalfont\scshape\centering}}% DELETED
+	{\normalfont\scshape}}% NEW
+\makeatother
+
+%forces newline after subsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+	\z@{.5\linespacing\@plus.7\linespacing}{.1\linespacing}%
+	{\normalfont\itshape}}
+\makeatother
+
+%line between rows of matrix
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\arraystretch}{1.5}
+
+\settasks{counter-format = tsk[1].}
+
+\SetupExSheets{solution/print = true}
+
+%opening
+\title{Numerical Analysis : Assignment 10}
+\author
+{
+	Aakash Jog\\
+	ID : 989323563
+}
+\date{\formatdate{29}{12}{2015}}
+
+\begin{document}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\begin{question}
+	Let $f$ be $5$ times continuously differentiable.
+	Consider the samples $f(-h)$, $f(0)$, $f(h)$.
+	\begin{enumerate}
+		\item
+			Find the interpolating polynomial of $f$ based on the samples $0$, $h$.
+			Find a formula for the interpolation error.
+		\item
+			Find an approximation of $f'(0)$ based on part 1.
+			Find an error formula for the interpolation error.
+		\item
+			Find the interpolating polynomial of $f$ based on the samples $-h$, $0$, $h$.
+			Find a formula for the interpolation error.
+		\item
+			Find an approximation of $f'(0)$ based on part 3.
+			Find an error formula for your approximation.
+		\item
+			Find an approximation of $f''(0)$ based on part 3.
+			Find an error formula for your approximation.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				f[x_0] & = f(0) \\
+				f[x_1] & = f(h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1] & = \frac{f(0) - f(h)}{-h}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p_1(x) & = f[x_0] + f[x_0,x_1] (x - x_0) \\
+                                       & = f(0) + \frac{f(0) - f(h)}{-h} x
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\psi(x) & = \prod (x - x_i) \\
+                                        & = (x) (x - h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f(x) & = p_2(x) + f[x_0,x_1,x_2,x] \psi(x) \\
+                                     & = p_2(x) + f[0,h,x] (x) (x - h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e(x) & = f[0,h,x] (x) (x - h)
+			\end{align*}
+		\item
+			\begin{align*}
+				f'(x)            & \approx {p_1}'(x) \\
+				\therefore f'(0) & = \frac{f(0) - f(h)}{-h}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e'(x) & = f[0,h,x,x] \psi(x) + f[0,h,x] \psi'(x) \\
+                                      & = f[0,h,x,x] (x) (x - h) + f[0,h,x] (2 x - h)
+			\end{align*}
+		\item
+			\begin{align*}
+				f[x_0] & = f(-h) \\
+				f[x_1] & = f(0)  \\
+				f[x_2] & = f(h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1] & = \frac{f(-h) - f(0)}{-h} \\
+				f[x_1,x_2] & = \frac{f(0) - f(h)}{-h}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1,x_2] & = \frac{f(-h) - 2 f(0) + f(h)}{2 h^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p_2(x) & = f[x_0] + f[x_0,x_1] (x - x_0) + f[x_0,x_1,x_2] (x - x_0) (x - x_1) \\
+                                       & = f(-h) + \frac{f(-h) - f(0)}{-h} (x + h) + \frac{f(-h) - 2 f(0) + f(h)}{2 h^2} (x + h) x
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\psi(x) & = \prod (x - x_i) \\
+                                        & = (x + h) (x) (x - h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f(x) & = p_2(x) + f[x_0,x_1,x_2,x] \psi(x) \\
+                                     & = p_2(x) + f[-h,0,h,x] (x + h) (x) (x - h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e(x) & = f[-h,0,h,x] (x + h) (x) (x - h)
+			\end{align*}
+		\item
+			\begin{align*}
+				f'(x)            & \approx {p_2}'(x)                                                         \\
+                                                 & = \frac{f(-h) - f(0)}{-h} + \frac{f(-h) - 2 f(0) + f(h)}{2 h^2} (2 x + h) \\
+				\therefore f'(0) & = \frac{f(-h) - f(0)}{-h} - \frac{f(-h) - 2 f(0) + f(h)}{2 h^2} h
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e'(x) & = f[-h,0,h,x,x] \psi(x) + f[-h,0,h,x] \psi'(x) \\
+                                      & = f[-h,0,h,x,x] (x + h) (x) (x - h) + f[-h,0,h,x] \left( 3 x^2 - h^2 \right)
+			\end{align*}
+		\item
+			\begin{align*}
+				f''(x)            & \approx {p_2}''(x)                      \\
+                                                  & = 2 \frac{f(-h) - 2 f(0) + f(h)}{2 h^2} \\
+				\therefore f''(0) & = \frac{f(-h) - 2 f(0) + f(h)}{h^2}     \\
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e''(x) & = f[-h,0,h,x,x,x] (x + h) (x) (x - h) + f[-h,0,h,x,x] (6 x)
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let $f$ be $5$ times continuously differentiable.
+	Consider the samples $f(-h)$, $f'(-h)$, $f(2 h)$.
+	\begin{enumerate}
+		\item
+			Find the interpolating polynomial of $f$ based on these samples.
+			Find a formula for the interpolation error.
+		\item
+			Find an approximation of $f''(0)$ based on part 1.
+			Find an error formula for the interpolation error.
+		\item
+			Find an approximation of $f''(2 h)$ based on part 1.
+			Find an error formula for the interpolation error.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				f[x_0] & = f(-h) \\
+				f[x_1] & = f(-h) \\
+				f[x_2] & = f(2 h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1] & = f'(-h) \\
+				f[x_1,x_2] & = \frac{f(2 h) - f(-h)}{3 h}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1,x_2] & = \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p_2(x) & = f[x_0] + f[x_0,x_1] (x - x_0) + f[x_0,x_1,x_2] (x - x_0) (x - x_1) \\
+                                       & = f(-h) + f'(-h) (x + h) + \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2} (x + h)^2
+			\end{align*}
+			Therefore,
+			Therefore,
+			\begin{align*}
+				\psi(x) & = \prod (x - x_i) \\
+                                        & = (x + h)^2 (x - 2 h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f(x) & = p_2(x) + f[x_0,x_1,x_2,x] \psi(x) \\
+                                     & = p_2(x) + f[-h,-h,2 h,x] (x + h)^2 (x - 2 h)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e(x) & = f[-h,-h,2 h,x] (x + h)^2 (x - 2 h)
+			\end{align*}
+		\item
+			\begin{align*}
+				f''(x) & \approx {p_2}''(x) \\
+                                       & = \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2} (2)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f''(0) & = 2 \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e''(x) & = \quad f[-h,-h,2 h,x,x,x] (x + h)^2 (x - 2 h)          \\
+                                       & \quad + 2 f[-h,-h,2 h,x,x] \left( 3 x^2 - 3 h^2 \right) \\
+                                       & \quad + f[-h,-h,2 h,x] (6 x)
+			\end{align*}
+		\item
+			\begin{align*}
+				f''(x) & \approx {p_2}''(x) \\
+                                       & = \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2} (2)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f''(2 h) & = 2 \frac{f(2 h) - f(-h) - 3 h f'(-h)}{9 h^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e''(x) & = \quad f[-h,-h,2 h,x,x,x] (x + h)^2 (x - 2 h)          \\
+                                       & \quad + 2 f[-h,-h,2 h,x,x] \left( 3 x^2 - 3 h^2 \right) \\
+                                       & \quad + f[-h,-h,2 h,x] (6 x)
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\end{document}
