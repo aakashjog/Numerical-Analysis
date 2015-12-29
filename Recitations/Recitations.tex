@@ -1342,4 +1342,139 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 	\end{enumerate}
 \end{solution}
 
+\recitation
+
+\begin{question}
+	Let $f \in C^4$.
+	Using Taylor expansion, find an approximation of $f''(a)$ of the form
+	\begin{align*}
+		f''(a) & = A f(a - h) + B f(a) + C f(a + h) + e
+	\end{align*}
+	where $e$ is of the form
+	\begin{align*}
+		e & = k f^{(n)}(c) h^m
+	\end{align*}
+	\begin{enumerate}
+		\item
+			Choose $A$, $B$, $C$, such that $m$ is maximized.
+		\item
+			Assume that for some $M > 0$,
+			\begin{align*}
+				\left| f''''(x) \right| & \le M
+			\end{align*}
+			Assume that the value s of $f$ are known up to an error bounded by $\varepsilon$.
+			The Differentiation formula above is calculated using the noisy data.
+			Bound the overall error in the approximation of $f''(a)$.
+		\item
+			What is the optimal $h$ for the error bound?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			For $c_1 \in (a,x)$,
+			\begin{align*}
+				f(x) & = \quad f(a)                          \\
+                                     & \quad + f'(a) (x - a)                 \\
+                                     & \quad + \frac{1}{2} f''(a) (x - a)^2  \\
+                                     & \quad + \frac{1}{6} f'''(a) (x - a)^3 \\
+                                     & \quad + \frac{1}{24} f''''(c_1)
+			\end{align*}
+			If $x = a - h$, $x - a = -h$.
+			Therefore,
+			\begin{align*}
+				f(a - h) & = \quad f(a) - h f'(a) + \frac{h^2}{2} f''(a) - \frac{h^3}{6} f'''(a) + \frac{h^4}{24} f''''(c_1)
+			\end{align*}
+			If $x = a + h$, $x - a = h$.
+			Therefore,
+			\begin{align*}
+				f(a - h) & = \quad f(a) + h f'(a) + \frac{h^2}{2} f''(a) + \frac{h^3}{6} f'''(a) + \frac{h^4}{24} f''''(c_2)
+			\end{align*}
+			If $x = a$, $h = 0$.
+			Therefore,
+			\begin{align*}
+				f(a) & = f(a)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				A f(a - h) + B f(a) + C f(a + h) + e & = \quad A f(a) + B f(a) + C f(a)                        \\
+                                                                     & \quad - A h f'(a) + C h f'(a)                           \\
+                                                                     & \quad + A \frac{h^2}{2} f''(a) + C \frac{h^2}{2} f''(a) \\
+                                                                     & \quad + \dots
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f''(a) & = A f(a - h) + B f(a) + C f(a + h) + e
+			\end{align*}
+			Therefore, comparing,
+			\begin{align*}
+				A + B + C                         & = 0 \\
+				-A + C                            & = 0 \\
+				\frac{h^2}{2} A + \frac{h^2}{2} C & = 1
+			\end{align*}
+			Therefore, solving,
+			\begin{align*}
+				A & = \frac{1}{h^2}  \\
+				B & = -\frac{2}{h^2} \\
+				C & = \frac{1}{h^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f''(a) & \approx \frac{f(a + h) - 2 f(a) + f(a + h)}{h^2}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\frac{f(a + h) - 2 f(a) + f(a + h)}{h^2} & = \quad \frac{f(a) - 2 f(a) + f(a)}{h^2}                                \\
+                                                                         & \quad + \frac{-h f'(a) - 0 + h f'(a)}{h^2}                              \\
+                                                                         & \quad + f''(a)                                                          \\
+                                                                         & \quad \frac{\frac{h^3}{6} f'''(a) - \frac{h^3}{6} f'''(a)}{h^2}         \\
+                                                                         & \quad \frac{\frac{h^4}{24} f''''(c_1) + \frac{h^4}{24} f''''(c_2)}{h^2} \\
+                                                                         & = f''(a) + \frac{2 h^2}{24} \frac{f''''(c_1) + f''''(c_2)}{2}
+			\end{align*}
+			Therefore, by the intermediate value theorem, for $c \in [c_1,c_2]$,
+			\begin{align*}
+				\frac{f''''(c_1) + f''''(c_2)}{2} & = f''''(c)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\frac{f(a + h) - 2 f(a) + f(a + h)}{h^2} & = f''(a) + \frac{h^2}{12} f''''(c)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				e & = \frac{h^2}{12} f''''(c)
+			\end{align*}
+		\item
+			Let the error in $f$ be $\eta$.
+			Therefore,
+			\begin{align*}
+				f(x) & = \tilde{f}(x) + \eta(x)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f''(a) & \approx \frac{\tilde{f}(a - h) - 2 \tilde{f}(a) + \tilde{f}(a + h)}{h^2}                       \\
+                                       & = \frac{f(a - h) - 2 f(a) + f(a + h)}{h^2} - \frac{\eta(a - h) - 2 \eta(h) + \eta(a + h)}{h^2} \\
+                                       & = f''(a) + e - \frac{\eta(a - h) - 2 \eta(a) + \eta(a + h)}{h^2}
+			\end{align*}
+			Let
+			\begin{align*}
+				E & = e - \frac{\eta(a - h) - 2 \eta(a) + \eta(a + h)}{h^2}
+			\end{align*}
+			Therefore, by triangle inequality,
+			\begin{align*}
+				|E| & \le |e| + \left| \frac{\eta(a - h)}{h^2} \right| + \left| \frac{\eta(a)}{h^2} \right| + \left| \frac{\eta(a + h)}{h^2} \right| \\
+                                    & \le \frac{h^2}{12} M + \frac{4 \varepsilon}{h^2}
+			\end{align*}
+		\item
+			Let
+			\begin{align*}
+				k(h) & = \frac{h^2}{12} M + \frac{4 \varepsilon}{h^2}
+			\end{align*}
+			Therefore, minimizing,
+			\begin{align*}
+				h & = \left( \frac{48 \varepsilon}{M} \right)^{\frac{1}{4}}
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
 \end{document}
