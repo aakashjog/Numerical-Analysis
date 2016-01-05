@@ -1477,4 +1477,113 @@ E-mail: \href{mailto:ronlevie@post.tau.ac.il}{ronlevie@post.tau.ac.il}\\
 	\end{enumerate}
 \end{solution}
 
+\recitation
+
+\begin{question}
+	Find an integration rule of the form
+	\begin{align*}
+		\int\limits_{0}^{h} f(x) \dif x & \approx A f(0) + B f'(0) + C f(h)
+	\end{align*}
+	where $f \in C^3$.
+	Find the error formula, and find a composite integration method based on the integration rule, for $\int\limits_{a}^{b} f(x) \dif x$.\\
+	How many sample points are needed to guarantee an error of absolute value less than or equal to $\frac{10^{-9}}{72}$, with $f(x) = \sin x$, and $[a,b] = [0,1]$.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		f[x_0] & = f(0) \\
+		f[x_1] & = f(0) \\
+		f[x_2] & = f(h)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f[x_0,x_1] & = f'(0) \\
+		f[x_1,x_2] & = \frac{f(h) - f(0)}{h}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f[x_0,x_1,x_2] & = \frac{f(h) - f(0)}{h^2} - \frac{f'(0)}{h}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		p_2(x) & = f[x_0] + f[x_0,x_1] (x - x_0) + f[x_0,x_1,x_2] (x - x_0) (x - x_1) \\
+                       & = f(0) + f'(0) x + \left( \frac{f(h) - f(0)}{h^2} - \frac{f'(0)}{h} \right) x^2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\int\limits_{0}^{h} f(x) \dif x & \approx \int\limits_{0}^{h} p_2(x) \dif x                                                                     \\
+                                                & \approx f(0) h + \frac{f'(0)}{2} h^2 + \left( \frac{f(h) - f(0)}{h^2} - \frac{f'(0)}{h} \right) \frac{h^3}{3} \\
+                                                & \approx \frac{2}{3} h f(0) + \frac{1}{6} h^2 f'(0) + \frac{1}{3} h f(h)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		f(x) & = p_2(x) + f[0,0,h,x] (x - 0) (x - 0) (x - h)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\int\limits_{0}^{h} f(x) & = \int\limits_{0}^{h} p_2(x) + \int\limits_{0}^{h} f[0,0,h,x] (x - 0) (x - 0) (x - h)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		E & = \int\limits_{0}^{h} f[0,0,h,x] (x - 0) (x - 0) (x - h)
+	\end{align*}
+	In the interval $(0,h)$, $(x - h)$ is always negative, and $x^2$ is always positive.
+	Therefore, by the mean value theorem for integrals,
+	\begin{align*}
+		E & = f[0,0,h,d] \int\limits_{0}^{h} x^2 (x - h) \dif x
+	\end{align*}
+	where $d \in (0,h)$.
+	Therefore,
+	\begin{align*}
+		E & = \frac{f^{(3)}(c)}{3!} \left( \frac{h^4}{4} - \frac{h^4}{3} \right)
+	\end{align*}
+	where $c \in (0,h)$.
+	Therefore,
+	\begin{align*}
+		E & = -\frac{h^4}{72} f^{(3)}(c)
+	\end{align*}
+	Let the interval $(a,b)$ be divided in $n$ intervals by $a = x_0 < \dots < x_n = b$, where
+	\begin{align*}
+		x_k & = a + h k
+	\end{align*}
+	where
+	\begin{align*}
+		h & = \frac{b - a}{n}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\int\limits_{a}^{b} f(x) \dif x & = \sum\limits_{k = 0}^{n - 1} \int\limits_{x_k}^{x_{k + 1}} f(x) \dif x
+	\end{align*}
+	Let
+	\begin{align*}
+		x & = y + x_k
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\int\limits_{a}^{b} f(x) \dif x & = \sum\limits_{k = 0}^{n - 1} \int\limits_{x_k}^{x_{k + 1}} f(x) \dif x                                                                                                      \\
+                                                & = \sum\limits_{k = 0}^{n - 1} \int\limits_{0}^{h} f(y + x_k) \dif y                                                                                                          \\
+                                                & = \sum\limits_{k = 0}^{n - 1} \frac{2}{3} h f(x_k) + \frac{1}{6} h^2 f'(x_k) + \frac{1}{3} h f(h + x_{k + 1}) + E_k                                                          \\
+                                                & = \sum\limits_{k = 0}^{n - 1} \frac{2}{3} h f(x_k) + \frac{1}{6} h^2 f'(x_k) + \frac{1}{3} h f(h + x_{k + 1}) - \left. \frac{h^4}{72} \dpd[3]{f(y + x_k)}{y} \right|_{y = c} \\
+                                                & = \sum\limits_{k = 0}^{n - 1} \frac{2}{3} h f(x_k) + \frac{1}{6} h^2 f'(x_k) + \frac{1}{3} h f(h + x_{k + 1}) - \frac{h^4}{72} f^{(3)}(c_k)                                  \\
+                                                & = \quad \frac{2}{3} h f(x_0) + \sum\limits_{k = 1}^{n - 1} h f(x_k) + \sum\limits_{k = 0}^{n - 1} \frac{1}{6} h^2 f'(x_k) + \frac{1}{3} h f(x_n)                             \\
+                                                & \quad - \frac{n \sum\limits_{k = 0}^{n - 1} \frac{h^4}{72} f^{(3)}(c_k)}{n}                                                                                                  \\
+                                                & = \quad \frac{2}{3} h f(x_0) + \sum\limits_{k = 1}^{n - 1} h f(x_k) + \sum\limits_{k = 0}^{n - 1} \frac{1}{6} h^2 f'(x_k) + \frac{1}{3} h f(x_n) - (b - a) \frac{h^3}{72} f^{(3)}(c)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		|e|                           & \le \left| -n \frac{h^4}{72} f^{(3)}(c) \right| \\
+                                              & \le \left| -(b - a) \frac{h^3}{72} f^{(3)}(c) \right|\\
+                                              & \le 1 \cdot \frac{h^3}{72} \cdot 1              \\
+		\therefore \frac{10^{-9}}{72} & \ge \frac{h^3}{72}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		h & \le 10^{-3}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		n & \ge 10^3
+	\end{align*}
+\end{solution}
+
 \end{document}
