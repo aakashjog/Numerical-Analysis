@@ -1,0 +1,540 @@
+\documentclass[fleqn, a4paper, 12pt, twoside, titlepage]{article}
+\usepackage{exsheets} %question and solution environments
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage{esint} %integral signs
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage{siunitx} %formatting units
+\usepackage{tikz, pgfplots} %diagrams
+	\usetikzlibrary{calc, hobby, patterns, intersections, angles, quotes, spy}
+\usepackage{graphicx} %inserting graphics
+\usepackage{epstopdf} %converting and inserting eps graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{ulem} %underline for \emph{}
+\usepackage{xfrac, lmodern} %inline fractions
+\usepackage{enumerate, enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage[american voltages]{circuitikz} %circuit diagrams
+\usepackage{pdflscape} %pages in landscape orientation
+\usepackage{setspace} %double spacing
+\usepackage{microtype} %micro-typography
+\usepackage{listings} %formatting code
+	\lstset{language=Matlab}
+	\lstdefinestyle{standardMatlab}
+	{
+		belowcaptionskip=1\baselineskip,
+		breaklines=true,
+		frame=L,
+		xleftmargin=\parindent,
+		language=C,
+		showstringspaces=false,
+		basicstyle=\footnotesize\ttfamily,
+		keywordstyle=\bfseries\color{green!40!black},
+		commentstyle=\itshape\color{purple!40!black},
+		identifierstyle=\color{blue},
+		stringstyle=\color{orange},
+	}
+\usepackage{algpseudocode} %algorithms
+\usepackage{algorithm} %algorithms
+\usepackage{todonotes}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{law}{Law}
+
+\newcommand{\curl}{\mathrm{curl\,}}
+
+\newcommand{\divergence}{\mathrm{div\,}}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\DeclareMathOperator{\cond}{cond}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\newcommand\blfootnote[1]{%
+	\begingroup
+	\renewcommand\thefootnote{}\footnote{#1}%
+	\addtocounter{footnote}{-1}%
+	\endgroup
+}
+
+\renewcommand{\tilde}{\widetilde}
+
+\renewcommand{\marginfont}{\scriptsize \color{blue}}
+
+\SetupExSheets{solution/print = true} %prints all solutions by default
+
+%opening
+\title{Numerical Analysis : Review Session}
+\author{Aakash Jog}
+\date{2015-16}
+
+\begin{document}
+
+\maketitle
+%\setlength{\mathindent}{0pt}
+
+\blfootnote
+{	
+	\begin{figure}[H]
+		\includegraphics[height = 12pt]{cc.eps}
+		\includegraphics[height = 12pt]{by.eps}
+		\includegraphics[height = 12pt]{nc.eps}
+		\includegraphics[height = 12pt]{sa.eps}
+	\end{figure}
+	This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit \url{http://creativecommons.org/licenses/by-nc-sa/4.0/}.
+} %CC-BY-NC-SA license
+
+\tableofcontents
+
+\newpage
+
+\begin{question}
+	Let $f : [0,1] \to \mathbb{R}$.
+	Consider the partition $0 < \frac{1}{N} < \dots < \frac{N - 1}{N} < 1$, for $N \in \mathbb{N}$.
+	Consider the space $\mathit{PC}$, i.e. the space of piecewise constant functions on this partition.
+	Therefore, $g \in \mathit{PC}$, if it is constant on each $\left[ \frac{n}{N},\frac{n + 1}{N} \right]$, where $n = 0,\dots,N - 1$.
+	Find a formula for $g \in \mathit{PC}$, closest to $f$, in the sense that $\displaystyle \int\limits_{0}^{1} \left| f(x) - g(x) \right|^2 \dif x$ is minimal.
+\end{question}
+
+\begin{solution}
+	Let
+	\begin{align*}
+		\varphi_n(x) &=
+			\begin{cases}
+				1 &;\quad \frac{n}{N} \le x \le \frac{n + 1}{N}\\
+				0 &;\quad \text{otherwise}
+			\end{cases}
+	\end{align*}
+	Therefore, the set of all $\varphi_n(x)$ form a basis of the space.
+	Therefore, let
+	\begin{align*}
+		g(x) &= \sum\limits_{n = 0}^{N - 1} c_n \varphi_n
+	\end{align*}
+	where $c_n \in \mathbb{R}$.
+	Therefore, the Gram matrix is
+	\begin{align*}
+			\begin{pmatrix}
+				\langle \varphi_0,\varphi_0 \rangle & \dots & \langle \varphi_0,\varphi_{N - 1} \rangle\\
+				\vdots & &\\
+				\langle \varphi_{N - 1},\varphi_0 \rangle & \dots & \langle \varphi_{N - 1},\varphi_{N - 1} \rangle\\
+			\end{pmatrix}
+			\begin{pmatrix}
+				c_0\\
+				\vdots\\
+				c_{N - 1}\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				\langle f,\varphi_0 \rangle\\
+				\vdots\\
+				\langle f,\varphi_{N - 1} \rangle\\
+			\end{pmatrix}
+	\end{align*}
+	Therefore, as
+	\begin{align*}
+		\int\limits_{0}^{1} \left| f(x) - g(x) \right|^2 \dif x &= \|f - g\|^2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\langle \alpha,\beta \rangle &= \int\limits_{0}^{1} \alpha(x) \overline{\beta(x)} \dif x
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\langle \varphi_n,\varphi_m \rangle &= \int\limits_{0}^{1} \varphi_n(x) \varphi_m(x) \dif x
+	\end{align*}
+	If $n \neq m$,
+	\begin{align*}
+		\int\limits_{0}^{1} \varphi_n(x) \varphi_m(x) \dif x &= 0
+	\end{align*}
+	If $n = m$,
+	\begin{align*}
+		\int\limits_{0}^{1} \varphi_n(x) \varphi_m(x) \dif x &= \int\limits_{0}^{1} \varphi_n(x) \varphi_n(x) \dif x\\
+		&= \int\limits_{\frac{n}{N}}^{\frac{n + 1}{N}} 1 \dif x\\
+		&= \frac{1}{N}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\langle \varphi_n,\varphi_m \rangle &=
+			\begin{cases}
+				0 &;\quad n \neq m\\
+				\frac{1}{N} &;\quad n = m\\
+			\end{cases}
+	\end{align*}
+	Therefore,
+	Similarly,
+	\begin{align*}
+		\langle f,\varphi_n \rangle &= \int\limits_{\frac{n}{N}}^{\frac{n + 1}{N}} f(x) \dif x
+	\end{align*}
+	Therefore,
+	\begin{align*}
+			\begin{pmatrix}
+				\frac{1}{N} & \dots & 0\\
+				\vdots & &\\
+				0 & \dots & \frac{1}{N}\\
+			\end{pmatrix}
+			\begin{pmatrix}
+				c_0\\
+				\vdots\\
+				c_{N - 1}\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				\int\limits_{0}^{\frac{1}{N}} f(x) \dif x\\
+				\vdots\\
+				\int\limits_{\frac{N - 1}{N}}^{1} f(x) \dif x\\
+			\end{pmatrix}\\
+		\therefore
+			\begin{pmatrix}
+				c_0\\
+				\vdots\\
+				c_{N - 1}\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				N & \dots & 0\\
+				\vdots & &\\
+				0 & \dots & N\\
+			\end{pmatrix}
+			\begin{pmatrix}
+				\int\limits_{0}^{\frac{1}{N}} f(x) \dif x\\
+				\vdots\\
+				\int\limits_{\frac{N - 1}{N}}^{1} f(x) \dif x\\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		g(x) &= \sum\limits_{n = 0}^{N - 1} N \left( \int\limits_{\frac{n}{N}}^{\frac{n + 1}{N}} f(t) \dif t \right) \varphi_n(x)
+	\end{align*}
+\end{solution}
+
+\begin{question}
+	Consider the following system.
+	\begin{align*}
+			\begin{pmatrix}
+				1 & \frac{1}{4}\\
+				p & \frac{1}{2}\\
+			\end{pmatrix}
+			\begin{pmatrix}
+				x_1\\
+				x_2\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				1\\
+				1\\
+			\end{pmatrix}
+	\end{align*}
+	\begin{enumerate}
+		\item Write the Gauss-Seidel iteration scheme.
+		\item Find all values of $p$ for which the method converges, for any $x^{(0)}$.
+		\item Given that $p = \frac{1}{4}$, how many iterations are required in order to reduce the initial error $\left\| x - x^{(0)} \right\|$ by six orders of magnitude, i.e. $10^{-6}$.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			For Gauss-Seidel,
+			\begin{align*}
+				x^{(n + 1)} &= B x^{(n)} + d
+			\end{align*}
+			where
+			\begin{align*}
+				B &= -(L + D)^{-1} U\\
+				d &= (L + D)^{-1} b
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				L + D &=
+					\begin{pmatrix}
+						1 & 0\\
+						p & \frac{1}{2}\\
+					\end{pmatrix}\\
+				\therefore (L + D)^{-1} &=
+					\begin{pmatrix}
+						1 & 0\\
+						p & \frac{1}{2}\\
+					\end{pmatrix}^{-1}
+				&=
+					2
+					\begin{pmatrix}
+						\frac{1}{2} & 0\\
+						-p & 1\\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				B &=
+					\begin{pmatrix}
+						-1 & 0\\
+						2 p & -2\\
+					\end{pmatrix}
+					\begin{pmatrix}
+						0 & \frac{1}{4}\\
+						0 & 0\\
+					\end{pmatrix}\\
+				&=
+					\begin{pmatrix}
+						0 & -\frac{1}{4}\\
+						0 & \frac{p}{2}\\
+					\end{pmatrix}\\
+				d &=
+					\begin{pmatrix}
+						1 & 0\\
+						-2 p & 2\\
+					\end{pmatrix}
+					\begin{pmatrix}
+						1\\
+						1\\
+					\end{pmatrix}
+				&=
+					\begin{pmatrix}
+						1\\
+						2 - 2 p\\
+					\end{pmatrix}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				x^{(n + 1)} &=
+					\begin{pmatrix}
+						0 & -\frac{1}{4}\\
+						0 & \frac{p}{2}\\
+					\end{pmatrix}
+					x^{(n)}
+					+
+					\begin{pmatrix}
+						1\\
+						2 - 2 p\\
+					\end{pmatrix}
+			\end{align*}
+		\item
+			For the method to converge,
+			\begin{align*}
+				\rho(B) &< 1
+			\end{align*}
+			where $\rho$ is the spectral radius of $B$.\\
+			Therefore,
+			\begin{align*}
+				\det(\lambda I - B) &=
+					\det
+					\begin{pmatrix}
+						\lambda & \frac{1}{4}\\
+						0 & \lambda - \frac{p}{2}
+					\end{pmatrix}\\
+				&= \lambda \left( \lambda - \frac{p}{2} \right)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\lambda_1 &= 0\\
+				\lambda_2 &= \frac{p}{2}
+			\end{align*}
+			Therefore, as
+			\begin{align*}
+				\rho(B) &< 1
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				|\lambda_2| &< 1\\
+				\therefore |p| &< 2
+			\end{align*}
+		\item
+			\begin{align*}
+				e^{(n)} &= x - x^{(n)}\\
+				&= B^n e^{(0)}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\left\| e^{(n)} \right\| &= \left\| B^n e^{(0)} \right\|\\
+				&\le \left\| B^n \right\| \left\| e^{(0)} \right\|\\
+				&\le \|B\|^n \left\|e^{(0)} \right\|
+			\end{align*}
+			The infinity norm of $B$ is
+			\begin{align*}
+				\|B\|_{\infty} &= \frac{1}{4}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\left\| e^{(n)} \right\| &\le 2^{-2 n} \left\| e^{(0)} \right\|
+			\end{align*}
+			Therefore, for the error to be less than $10^{-6}$,
+			\begin{align*}
+				2^{-2 n} &< 10^{-6}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				n &= 10
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Given
+	\begin{align*}
+		\left( x_i,f(x_i) \right) &= \left( (1,3),(2,16),(3,11) \right)\\
+		\left| f^{(3)}(x) \right| &< 5\\
+		\left| f^{(4)}(x) \right| &< 4\\
+		\left| f^{(5)}(x) \right| &< 3
+	\end{align*}
+	\begin{enumerate}
+		\item
+			What is the degree of the interpolation polynomial?
+		\item
+			Find an upper bound for the error.
+		\item
+			What is the degree of the interpolation polynomial after adding the sample $(4,27)$?
+		\item
+			Let $l_i(x)$ be the Lagrange polynomials based on the four points above.
+			Find the degree of
+			\begin{align*}
+				Q(x) &= l_1(x) + 2 l_2(x) + 3 l_3(x) + 4 l_4(x)
+			\end{align*}
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			\begin{align*}
+				f[x_0] &= 3\\
+				f[x_1] &= 16\\
+				f[x_2] &= 11
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1] &= \frac{3 - 16}{1 - 2}\\
+				&= 13\\
+				f[x_1,x_2] &= \frac{16 - 11}{2 - 3}\\
+				&= -5
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1,x_2] &= \frac{13 - (-5)}{1 - 3}\\
+				&= -9
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				p(x) &= f[x_0] + f[x_0,x_1] (x - x_0) + f[x_0,x_1,x_2] (x - x_0) (x - x_1)\\
+				&= 3 + 13 (x - 1) - 9 (x - 1) (x - 2)
+			\end{align*}
+			Therefore, the degree of the interpolating polynomial is $2$.
+		\item
+			\begin{align*}
+				e &= f[x_0,x_1,x_2,x] (x - x_1) (x - x_2) (x - x_3)\\
+				&= f[1,2,3,x] (x - 1) (x - 2) (x - 3)\\
+				&\le \frac{f^{(3)}(\xi)}{3!} (x - 1)(x - 2) (x - 3)
+			\end{align*}
+			Therefore, according to the given conditions,
+			\begin{align*}
+				|e| &\le \frac{5}{6} \left| (x - 1) (x - 2) (x - 3) \right|
+			\end{align*}
+		\item
+			\begin{align*}
+				f[x_0] &= 3\\
+				f[x_1] &= 16\\
+				f[x_2] &= 11\
+				f[x_3] &= 27
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1] &= \frac{3 - 16}{1 - 2}\\
+				&= 13\\
+				f[x_1,x_2] &= \frac{16 - 11}{2 - 3}\\
+				&= -5\\
+				f[x_2,x_3] &= \frac{11 - 27}{3 - 4}\\
+				&= 16
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1,x_2] &= \frac{13 - (-5)}{1 - 3}\\
+				&= -9\\
+				f[x_1,x_2,x_3] &= \frac{-5 - 16}{2 - 4}\\
+				&= 10.5
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				f[x_0,x_1,x_2,x_3] &= \frac{-9 - 10.5}{1 - 4}\\
+				&\neq 0
+			\end{align*}
+			Therefore, the degree of the interpolation polynomial is $3$.
+		\item
+			\begin{align*}
+				l_1(x) &= \frac{(x - 2) (x - 3) (x - 4)}{(1 - 2) (1 - 3) (1 - 4)}\\
+				l_2(x) &= \frac{(x - 1) (x - 3) (x - 4)}{(2 - 1) (2 - 3) (2 - 4)}\\
+				l_3(x) &= \frac{(x - 1) (x - 2) (x - 4)}{(3 - 1) (3 - 2) (3 - 4)}\\
+				l_4(x) &= \frac{(x - 1) (x - 2) (x - 3)}{(4 - 1) (4 - 2) (4 - 3)}
+			\end{align*}
+			Therefore, solving, the degree is $1$.
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Consider
+	\begin{align*}
+		x_{n + 1} &= x_n + A \frac{{x_n}^2 - 2}{x_n} + B \frac{{x_n}^2 - 2}{{x_n}^3}
+	\end{align*}
+	\begin{enumerate}
+		\item What is the fixed point?
+		\item Find $A$ and $B$, such that the rate of convergence is maximal.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}[leftmargin=*]
+		\item
+			For the fixed point,
+			\begin{align*}
+				x &= g(x)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				x &= x + A \frac{x - 2}{x} + B \frac{x^2 - 2}{x^3}
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				A \frac{x^2 - 2}{x} + B \frac{x^2 - 2}{x^3} &= 0
+			\end{align*}
+			Therefore, solving,
+			\begin{align*}
+				x &= \pm \sqrt{2}
+			\end{align*}
+			or
+			\begin{align*}
+				x &= \pm \sqrt{-\frac{A}{B}}
+			\end{align*}
+		\item
+			\begin{align*}
+				g(x) &= A \frac{x^2 - 2}{x} + B \frac{x^2 - 2}{x^3} + x\\
+				\therefore g'(x) &= 1 + A \frac{2 x^2 - \left( x^2 - 2 \right)}{x^2} + B \frac{2 x^4 - \left( x^2 - 2 \right) 3 x^2}{x^6}
+			\end{align*}
+			Therefore, if $g'(x) = 0$, for $x = \pm \sqrt{2}$, solving,
+			\begin{align*}
+				1 + 2 A + B &= 0
+			\end{align*}
+			Therefore, if $g'(x) = 0$, for $x = \pm \sqrt{2}$, solving,
+			\begin{align*}
+				2 A + 5 B &= 0
+			\end{align*}
+			Therefore, solving,
+			\begin{align*}
+				A &= -\frac{5}{8}\\
+				B &= \frac{1}{4}
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\end{document}
